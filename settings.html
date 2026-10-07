@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Settings — Fast &amp; Reliable Bank</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="auth.js" defer></script>
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <h2>⚙️ Settings</h2>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <img id="userAvatar" class="avatar" alt="Profile" style="display:none" src="">
+    <span id="userDisplay"></span>
+    <a class="interfaces-link" href="interfaces.html" title="All Interfaces" aria-label="All Interfaces" style="margin-left:8px;text-decoration:none;display:inline-flex;align-items:center">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+        <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5" fill="none"/>
+        <path d="M12 7l3 2-2 3-3-2 2-3z" fill="currentColor"/>
+      </svg>
+    </a>
+  </div>
+  </header>
+
+  <main class="center">
+    <section class="card-surface">
+      <h3>Security</h3>
+      <p style="color:var(--muted)">Manage your PIN, biometrics and transaction security.</p>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px;">
+        <button id="btnCreatePin">Create / Set PIN</button>
+        <button id="btnChangePin">Change PIN</button>
+        <button id="btnForgotPin">Forgot PIN</button>
+      </div>
+
+      <div style="margin-top:16px;">
+        <label class="toggle">
+          <input type="checkbox" id="chkRequirePin">
+          <span class="toggle-track" aria-hidden="true"></span>
+          <span class="label-text">Require PIN for transactions</span>
+        </label>
+      </div>
+
+      <hr style="margin:14px 0">
+
+      <h4>Biometrics</h4>
+      <p style="color:var(--muted)">Use your device biometrics to approve actions (simulated if not supported).</p>
+      <div style="display:flex;gap:8px;align-items:center;margin-top:8px;">
+        <button id="btnEnableFingerprint">Enable Fingerprint</button>
+        <button id="btnEnableFace">Enable FaceID</button>
+      </div>
+    </section>
+
+    <section class="card-surface" style="margin-top:12px">
+      <h3>Privacy</h3>
+      <p style="color:var(--muted);margin-top:6px">Control what the app shares and how your account information is displayed.</p>
+      <div class="privacy-grid" style="display:flex;gap:12px;flex-direction:column;margin-top:12px">
+        <label class="toggle">
+          <input type="checkbox" id="chkShareLocation">
+          <span class="toggle-track" aria-hidden="true"></span>
+          <span class="label-text">Share location with app</span>
+        </label>
+
+        <label class="toggle">
+          <input type="checkbox" id="chkHideAccount">
+          <span class="toggle-track" aria-hidden="true"></span>
+          <span class="label-text">Hide account numbers</span>
+        </label>
+      </div>
+    </section>
+
+    <section class="card-surface" style="margin-top:12px">
+      <h3>App</h3>
+      <div style="display:flex;gap:12px;align-items:center;margin-top:8px;">
+  <label style="flex:1">Auto-lock (minutes)</label>
+  <input id="autoLock" class="small-input" type="number" min="1" max="120" />
+      </div>
+      <div style="margin-top:12px;display:flex;gap:8px;align-items:center;">
+        <button id="btnClearData" style="background:transparent;color:var(--danger);border:1px solid rgba(0,0,0,0.06)">Clear App Data</button>
+      </div>
+    </section>
+  </main>
+
+  <nav class="bottom-nav">
+    <a href="dashboard.html" class="nav-item"><span class="nav-icon"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M3 11.5L12 4l9 7.5V21a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V11.5z" fill="currentColor"/></svg></span></a>
+    <a href="locations.html" class="nav-item"><span class="nav-icon"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 2C8 6 6 9.5 6 12.5 6 16 9 20 12 22c3-2 6-6 6-9.5C18 9.5 16 6 12 2z" fill="currentColor"/></svg></span></a>
+    <a href="send.html" class="nav-item"><span class="nav-icon"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2z" fill="currentColor"/></svg></span></a>
+    <a href="report.html" class="nav-item"><span class="nav-icon"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 22a2 2 0 0 0 2-2H10a2 2 0 0 0 2 2zm6-6V11c0-3.3-2.1-6.1-5-6.8V3a1 1 0 1 0-2 0v1.2C8.1 4.9 6 7.7 6 11v5l-2 2v1h16v-1l-2-2z" fill="currentColor"/></svg></span></a>
+    <a href="profile.html" class="nav-item"><span class="nav-icon"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm0 2c-4 0-7 2-7 4v2h14v-2c0-2-3-4-7-4z" fill="currentColor"/></svg></span></a>
+    <a href="#" onclick="logout()" class="nav-item"><span class="nav-icon"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M16 13v-2H7V8l-5 4 5 4v-3zM20 3h-8v2h8v14h-8v2h8a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1z" fill="currentColor"/></svg></span></a>
+  </nav>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.loadUser) window.loadUser();
+      if (window.loadProfile) window.loadProfile();
+      // wire settings controls to script functions
+      document.getElementById('btnCreatePin')?.addEventListener('click', async () => {
+        try{
+          const p = await window.openInputModal({ title: 'Create PIN', label: 'Enter new 4-digit PIN (demo)', placeholder: '1234', type: 'password' });
+          if (!p) return;
+          if (String(p).length < 4) { showToast('PIN too short', 'info'); return; }
+          if (window.setPin) await window.setPin(p);
+          showToast('PIN created', 'success');
+        }catch(e){ showToast('Failed to create PIN', 'danger'); }
+      });
+      document.getElementById('btnChangePin')?.addEventListener('click', async () => {
+        try{
+          const oldP = await window.openInputModal({ title: 'Current PIN', label: 'Enter current PIN', type: 'password' });
+          if (!oldP) return;
+          const newP = await window.openInputModal({ title: 'New PIN', label: 'Enter new PIN', type: 'password' });
+          if (!newP) return;
+          if (window.changePin) {
+            const ok = await window.changePin(oldP, newP);
+            if (ok) showToast('PIN changed', 'success'); else showToast('Incorrect current PIN', 'danger');
+          }
+        }catch(e){ showToast('Failed to change PIN', 'danger'); }
+      });
+      document.getElementById('btnForgotPin')?.addEventListener('click', () => {
+        if (window.forgotPin) window.forgotPin();
+      });
+      document.getElementById('btnEnableFingerprint')?.addEventListener('click', () => { if (window.enableBiometrics) window.enableBiometrics('fingerprint'); });
+      document.getElementById('btnEnableFace')?.addEventListener('click', () => { if (window.enableBiometrics) window.enableBiometrics('face'); });
+
+      // load prefs
+      const prefs = JSON.parse(localStorage.getItem('bt_prefs')||'{}');
+      document.getElementById('chkRequirePin').checked = !!prefs.requirePin;
+      document.getElementById('chkShareLocation').checked = !!prefs.shareLocation;
+      document.getElementById('chkHideAccount').checked = !!prefs.hideAccount;
+      document.getElementById('autoLock').value = prefs.autoLockMinutes || 5;
+
+      document.getElementById('chkRequirePin')?.addEventListener('change', (e) => { prefs.requirePin = e.target.checked; localStorage.setItem('bt_prefs', JSON.stringify(prefs)); });
+      document.getElementById('chkShareLocation')?.addEventListener('change', (e) => { prefs.shareLocation = e.target.checked; localStorage.setItem('bt_prefs', JSON.stringify(prefs)); });
+      document.getElementById('chkHideAccount')?.addEventListener('change', (e) => { prefs.hideAccount = e.target.checked; localStorage.setItem('bt_prefs', JSON.stringify(prefs)); });
+      document.getElementById('autoLock')?.addEventListener('change', (e) => { prefs.autoLockMinutes = Number(e.target.value)||5; localStorage.setItem('bt_prefs', JSON.stringify(prefs)); });
+
+      document.getElementById('btnClearData')?.addEventListener('click', async () => {
+        try{
+          // Use the app's accessible confirm modal helper (returns a Promise<boolean>)
+          // openConfirmModal is provided in script.js; call it directly so we avoid synchronous confirm().
+          const ok = await window.openConfirmModal({ title: 'Clear app data', body: 'Clear all app data (this will remove local profiles, history and settings)?' });
+          if (!ok) return;
+          localStorage.clear();
+          showToast('App data cleared.', 'info');
+          setTimeout(() => { window.location.href = 'index.html'; }, 700);
+        }catch(e){ showToast('Failed to clear app data', 'danger'); }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Fast & Reliable Bank UI</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0066ff">
+    <script src="auth.js" defer></script>
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <header class="topbar">
+    <h2>💳 Fast &amp; Reliable Bank</h2>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <img id="userAvatar" class="avatar" alt="Profile" style="display:none" src="">
+                <span id="userDisplay"></span>
+                <a class="interfaces-link" href="interfaces.html" title="All Interfaces" aria-label="All Interfaces" style="margin-left:8px;text-decoration:none;display:inline-flex;align-items:center">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                        <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                        <path d="M12 7l3 2-2 3-3-2 2-3z" fill="currentColor"/>
+                    </svg>
+                </a>
+            </div>
+    </header>
+
+    <main>
+        <section class="balance-card">
+            <h3>Available Balance</h3>
+            <div class="card-surface card-inner">
+                <div style="display:flex;flex-direction:column;">
+                    <h1 id="balanceValue">₦250,000,000</h1>
+                    <p class="account-number" style="margin:0.2rem 0 0 0;">Main account</p>
+                </div>
+                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+                    <button id="btnToggleBalance" class="balance-toggle">Hide</button>
+                </div>
+            </div>
+            <p id="accountNumber" class="account-number"></p>
+            <p id="accountName" class="account-number"></p>
+        </section>
+        <section class="activity">
+            <h3>Recent Activity</h3>
+            <div id="activityList" class="activity-list">Loading recent activity…</div>
+            <div style="text-align:center;margin-top:8px"><a href="dashboard.html" class="small-link">View all transactions</a></div>
+        </section>
+
+            <section class="actions">
+                <a class="card card-surface" href="interfaces.html"><span class="card-emoji">🧭</span><span class="card-label">All Interfaces</span></a>
+                <a class="card card-surface" href="send.html"><span class="card-emoji">💸</span><span class="card-label">Send</span></a>
+                <a class="card card-surface" href="#"><span class="card-emoji">🏧</span><span class="card-label">Withdraw</span></a>
+                <a class="card card-surface" href="#"><span class="card-emoji">📊</span><span class="card-label">History</span></a>
+                <a class="card card-surface" href="airtime.html"><span class="card-emoji">📱</span><span class="card-label">Airtime</span></a>
+                <a class="card card-surface" href="data.html"><span class="card-emoji">🌐</span><span class="card-label">Data</span></a>
+                <a class="card card-surface" href="bills.html"><span class="card-emoji">💡</span><span class="card-label">Bills</span></a>
+                <a class="card card-surface" href="loan.html"><span class="card-emoji">🏦</span><span class="card-label">Loan</span></a>
+                <a class="card card-surface" href="support.html"><span class="card-emoji">🆘</span><span class="card-label">Support</span></a>
+            </section>
+
+        
+    </main>
+
+        <nav class="bottom-nav" id="bottomNav">
+                                <a class="nav-item active" href="dashboard.html" data-label="Home"><span class="nav-icon"> 
+                                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 11.5L12 4l9 7.5V21a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V11.5z" fill="currentColor"/></svg>
+                                </span><span class="nav-label">Home</span></a>
+                                <a class="nav-item" href="interfaces.html" data-label="All"><span class="nav-icon">
+                                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M12 7l3 2-2 3-3-2 2-3z" fill="currentColor"/></svg>
+                                </span><span class="nav-label">All</span></a>
+                                <a class="nav-item" href="locations.html" data-label="Locations"><span class="nav-icon">
+                                    <svg viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8 6 6 9.5 6 12.5 6 16 9 20 12 22c3-2 6-6 6-9.5C18 9.5 16 6 12 2z" fill="currentColor"/></svg>
+                                </span><span class="nav-label">Map</span></a>
+                                <a class="nav-item" href="send.html" data-label="Send"><span class="nav-icon">
+                                    <svg viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg"><path d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2z" fill="currentColor"/></svg>
+                                </span><span class="nav-label">Send</span></a>
+                                <a class="nav-item" href="report.html" data-label="Alerts"><span class="nav-icon">
+                                    <svg viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg"><path d="M12 22a2 2 0 0 0 2-2H10a2 2 0 0 0 2 2zm6-6V11c0-3.3-2.1-6.1-5-6.8V3a1 1 0 1 0-2 0v1.2C8.1 4.9 6 7.7 6 11v5l-2 2v1h16v-1l-2-2z" fill="currentColor"/></svg>
+                                </span><span class="nav-label">Alerts</span></a>
+                                <a class="nav-item" href="profile.html" data-label="Profile"><span class="nav-icon">
+                                    <svg viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm0 2c-4 0-7 2-7 4v2h14v-2c0-2-3-4-7-4z" fill="currentColor"/></svg>
+                                </span><span class="nav-label">Profile</span></a>
+                                <a class="nav-item" href="#" onclick="logout()" data-label="Logout"><span class="nav-icon">
+                                    <svg viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg"><path d="M16 13v-2H7V8l-5 4 5 4v-3zM20 3h-8v2h8v14h-8v2h8a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1z" fill="currentColor"/></svg>
+                                </span><span class="nav-label">Logout</span></a>
+                <div class="nav-indicator" aria-hidden="true"></div>
+        </nav>
+
+        <script>
+            // Animated bottom nav indicator
+            (function(){
+                const nav = document.getElementById('bottomNav');
+                if (!nav) return;
+                const items = Array.from(nav.querySelectorAll('.nav-item'));
+                const indicator = nav.querySelector('.nav-indicator');
+
+                function placeIndicator(el, immediate){
+                    if (!el || !indicator) return;
+                    const navRect = nav.getBoundingClientRect();
+                    const elRect = el.getBoundingClientRect();
+                    const width = Math.max(48, Math.min(84, elRect.width - 8));
+                    const left = elRect.left - navRect.left + (elRect.width - width)/2;
+                    indicator.style.width = width + 'px';
+                    indicator.style.transform = `translateX(${left}px)`;
+                    if (immediate) indicator.style.transition = 'none';
+                    else indicator.style.transition = '';
+                }
+
+                // initial placement on active or first item
+                const active = nav.querySelector('.nav-item.active') || items[0];
+                placeIndicator(active, true);
+
+                // move on click/focus
+                items.forEach(it => {
+                    it.addEventListener('click', (e) => {
+                        // allow navigation but animate immediately for feel
+                        items.forEach(x=>x.classList.remove('active'));
+                        it.classList.add('active');
+                        placeIndicator(it, false);
+                        // ripple effect
+                        const r = document.createElement('span'); r.className='ripple'; it.appendChild(r);
+                        setTimeout(()=>r.remove(),600);
+                    });
+                    it.addEventListener('focus', ()=> placeIndicator(it, false));
+                });
+
+                // reposition on resize
+                window.addEventListener('resize', ()=> placeIndicator(nav.querySelector('.nav-item.active') || items[0], true));
+            })();
+        </script>
+
+    <script>
+        // initialize user display after DOM loads
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.checkAuth) window.checkAuth(false); // do not redirect automatically
+            if (window.loadUser) window.loadUser();
+            if (window.loadProfile) window.loadProfile();
+            document.getElementById('btnToggleBalance')?.addEventListener('click', () => window.toggleBalance && window.toggleBalance());
+            // render recent activity on the dashboard
+            try {
+                const list = document.getElementById('activityList');
+                if (list && window.renderRecentActivity) window.renderRecentActivity(list);
+            } catch (e) { console.error('activity render failed', e); }
+        });
+    </script>
+</body>
+</html>

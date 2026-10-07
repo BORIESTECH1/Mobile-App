@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Esusu Groups — Fast &amp; Reliable Bank</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div style="display:flex;align-items:center;gap:12px">
+      <a href="index.html" class="small-link">← Home</a>
+      <h2>Esusu Groups</h2>
+    </div>
+    <div id="userDisplay">User</div>
+  </header>
+
+  <main>
+    <section class="groups-hero card-surface">
+      <div>
+        <h3>Create or join community savings groups</h3>
+        <p class="small-link">Start a simple daily savings rotation or join existing groups. This demo stores data locally.</p>
+        <div id="newGroupForm" style="margin-top:12px;display:none">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+            <input id="g_name" placeholder="Group name" style="min-width:180px" />
+            <input id="g_amount" type="number" placeholder="Contribution (NGN)" style="width:160px" />
+            <input id="g_start" type="date" style="width:160px" />
+            <input id="g_admin" placeholder="Admin user id" style="min-width:140px" />
+            <button id="btnCreateGroup" class="primary">Create</button>
+            <button id="btnCancelCreate" class="btn-ghost">Cancel</button>
+          </div>
+          <div id="g_form_error" class="small-link" style="display:none;color:var(--danger);margin-top:8px"></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button id="btnShowNewGroup">New Group</button>
+        <button id="btnProcessDue" class="btn-ghost">Process due payouts</button>
+        <button id="btnSimulate" class="btn-ghost">Simulate days</button>
+        <button id="btnRefreshGroups" class="btn-ghost">Refresh</button>
+      </div>
+    </section>
+
+    <section>
+      <div id="groupsList" class="groups-grid"></div>
+      <div id="groupsEmpty" class="group-list-empty" style="display:none">No groups yet. Create one to get started.</div>
+    </section>
+  </main>
+
+<script>
+    // ensure core helpers are loaded
+    (function(){
+      if (!window.esusu) {
+        var s = document.createElement('script'); s.src = 'script.js'; s.defer = false; document.head.appendChild(s);
+      }
+    })();
+  function renderGroups(){
+    const container = document.getElementById('groupsList');
+    container.innerHTML = '';
+    const groups = (window.esusu && window.esusu.listGroups && window.esusu.listGroups()) || [];
+    if (!groups.length){ document.getElementById('groupsEmpty').style.display='block'; return; }
+    document.getElementById('groupsEmpty').style.display='none';
+      const today = new Date().toISOString().slice(0,10);
+      groups.slice(0,3).forEach(g => {
+          const beneficiary = (window.esusu && window.esusu.getBeneficiary) ? window.esusu.getBeneficiary(g.id, today) : null;
+      const el = document.createElement('div'); el.className='group-card card-surface';
+      el.innerHTML = `
+        <div class="group-meta">
+          <div class="group-avatar">${(g.name||'G').slice(0,2).toUpperCase()}</div>
+          <div style="flex:1">
+            <strong>${g.name}</strong>
+                <div class="small-link">Contrib: ₦${g.contributionAmount} • Members: ${g.members.length} ${beneficiary ? '• beneficiary: ' + beneficiary.userId : ''}</div>
+          </div>
+        </div>
+        <div class="group-actions">
+          <button class="btn-ghost" data-id="${g.id}" onclick="onViewGroup('${g.id}')">View</button>
+          <button onclick="onJoin('${g.id}')">Join</button>
+        </div>
+        <div class="group-foot"> <span>Starts: ${g.startDate}</span> <span class="small-link">Admin: ${g.adminUser}</span></div>
+      `;
+      container.appendChild(el);
+    });
+  }
+
+  function onViewGroup(id){ location.href = 'group.html?id=' + encodeURIComponent(id); }
+  function showFallback(msg){ const el = document.createElement('div'); el.className='notification'; el.style.zIndex=99999; el.style.position='fixed'; el.style.right='20px'; el.style.bottom='20px'; el.textContent=msg; document.body.appendChild(el); setTimeout(()=>el.remove(),3000); }
+  // Central notify helper: prefer showToast, then showNotification, finally inline fallback
+  function notify(msg, type='info', opts){ if (window.showToast) return window.showToast(msg, type, opts); if (window.showNotification) return window.showNotification(msg); return showFallback(msg); }
+  function onJoin(id){
+    if (window.openEsusuJoinModal) return window.openEsusuJoinModal(id);
+    (async function(){
+      try{
+        let user = localStorage.getItem('loggedInUser') || '';
+        if (!user) {
+          const u = await window.openInputModal({ title: 'Join group', label: 'User id', placeholder: 'alice' });
+          if (!u) return; user = u;
+        }
+        window.esusu.joinGroup(id, user);
+  notify('Joined','success');
+        renderGroups();
+  }catch(e){ notify(e.message || String(e),'danger'); }
+    })();
+  }
+
+  // Show/hide new group form
+  document.getElementById('btnShowNewGroup').addEventListener('click', ()=>{
+    const f = document.getElementById('newGroupForm');
+    if (!f) return;
+    f.style.display = (f.style.display === 'none' || f.style.display === '') ? 'block' : 'none';
+    // prefill some defaults
+    const admin = localStorage.getItem('loggedInUser') || '';
+    document.getElementById('g_admin').value = admin;
+    document.getElementById('g_start').value = new Date().toISOString().slice(0,10);
+  });
+
+  document.getElementById('btnCancelCreate').addEventListener('click', ()=>{ document.getElementById('newGroupForm').style.display = 'none'; });
+
+  document.getElementById('btnCreateGroup').addEventListener('click', ()=>{
+    const name = document.getElementById('g_name').value.trim();
+    const amount = Number(document.getElementById('g_amount').value || 0);
+    const start = document.getElementById('g_start').value || new Date().toISOString().slice(0,10);
+    const admin = document.getElementById('g_admin').value.trim() || localStorage.getItem('loggedInUser') || 'admin';
+    const err = document.getElementById('g_form_error'); err.style.display='none';
+    if (!name) { err.innerText = 'Enter a group name'; err.style.display='block'; return; }
+    if (!amount || amount <= 0) { err.innerText = 'Enter a valid contribution amount'; err.style.display='block'; return; }
+    try{
+      const g = window.esusu.createGroup({ name, contributionAmount: amount, startDate: start, adminUser: admin });
+  notify('Group created: ' + g.name, 'success');
+      document.getElementById('newGroupForm').style.display = 'none';
+      renderGroups();
+  }catch(e){ notify(e.message || String(e),'danger'); }
+  });
+
+  // Process all due payouts for today
+  document.getElementById('btnProcessDue').addEventListener('click', ()=>{
+    try{
+      const res = window.esusu && window.esusu.processDuePayouts ? window.esusu.processDuePayouts() : [];
+      const processed = res.filter(r=>!r.skipped && !r.error).length;
+  notify(`Processed ${processed} group(s) for today`, 'info');
+      renderGroups();
+  }catch(e){ notify(e.message || String(e),'danger'); }
+  });
+
+  // Simulate N days using an input modal (async) when available
+  document.getElementById('btnSimulate').addEventListener('click', async ()=>{
+    try{
+      const v = await window.openInputModal({ title: 'Simulate days', label: 'Number of days to simulate', placeholder: '3', type: 'number', defaultValue: '3' });
+      const n = Number(v) || 0;
+      if (!n || n <= 0) return;
+      const all = window.esusu && window.esusu.simulateDays ? window.esusu.simulateDays(n) : [];
+  notify(`Simulated ${all.length} day(s).`, 'info', { duration: 4000 });
+      renderGroups();
+  }catch(e){ notify(e.message || String(e),'danger'); }
+  });
+  document.getElementById('btnRefreshGroups').addEventListener('click',renderGroups);
+
+  // initial render
+  setTimeout(renderGroups, 120);
+</script>
+</body>
+</html>

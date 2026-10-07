@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Fast &amp; Reliable Bank — All Interfaces</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="auth.js" defer></script>
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+  <h2>🧭 Fast &amp; Reliable Bank — Interfaces</h2>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <img id="userAvatar" class="avatar" alt="Profile" style="display:none" src="">
+      <span id="userDisplay"></span>
+      <a class="interfaces-link" href="interfaces.html" title="All Interfaces" aria-label="All Interfaces" style="margin-left:8px;text-decoration:none;display:inline-flex;align-items:center">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5" fill="none"/>
+          <path d="M12 7l3 2-2 3-3-2 2-3z" fill="currentColor"/>
+        </svg>
+      </a>
+    </div>
+  </header>
+
+  <main class="center">
+    <section class="card-surface">
+      <h3 style="margin-top:0">All Interfaces</h3>
+      <p style="color:var(--muted)">Quick access to all available app interfaces and modules.</p>
+      <div class="biller-grid" style="margin-top:12px">
+        <a class="biller-tile" href="dashboard.html"><strong>Dashboard</strong><div class="biller-sub">Overview, balance, recent activity</div></a>
+        <a class="biller-tile" href="index.html"><strong>Home</strong><div class="biller-sub">Compact home view</div></a>
+        <a class="biller-tile" href="airtime.html"><strong>Airtime</strong><div class="biller-sub">Buy airtime</div></a>
+        <a class="biller-tile" href="data.html"><strong>Data</strong><div class="biller-sub">Buy data plans</div></a>
+        <a class="biller-tile" href="bills.html"><strong>Bills</strong><div class="biller-sub">Pay utilities & subscriptions</div></a>
+        <a class="biller-tile" href="loan.html"><strong>Loans</strong><div class="biller-sub">Request and track loans</div></a>
+        <a class="biller-tile" href="send.html"><strong>Send</strong><div class="biller-sub">Peer-to-peer transfers</div></a>
+        <a class="biller-tile" href="profile.html"><strong>Profile</strong><div class="biller-sub">Manage account</div></a>
+        <a class="biller-tile" href="support.html"><strong>Support</strong><div class="biller-sub">Help & tickets</div></a>
+        <a class="biller-tile" href="settings.html"><strong>Settings</strong><div class="biller-sub">App preferences</div></a>
+      </div>
+    </section>
+
+    <section class="card-surface" style="margin-top:12px">
+      <h3>Home Shortcut</h3>
+      <p style="color:var(--muted)">Add this page to your home screen or use the quick shortcut below on mobile to access all interfaces.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+        <a class="card" href="index.html">Open Home</a>
+        <a class="card" href="interfaces.html">Open All Interfaces</a>
+      </div>
+    </section>
+  </main>
+
+  <nav class="bottom-nav">
+    <a class="nav-item" href="index.html"><span class="nav-icon"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M3 11.5L12 4l9 7.5V21a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V11.5z" fill="currentColor"/></svg></span><span class="nav-label">Home</span></a>
+    <a class="nav-item" href="interfaces.html"><span class="nav-icon"><svg viewBox="0 0 24 24" width="20" height="20"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M12 7l3 2-2 3-3-2 2-3z" fill="currentColor"/></svg></span><span class="nav-label">All</span></a>
+    <a class="nav-item" href="profile.html"><span class="nav-icon"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm0 2c-4 0-7 2-7 4v2h14v-2c0-2-3-4-7-4z" fill="currentColor"/></svg></span><span class="nav-label">Profile</span></a>
+    <a class="nav-item" href="support.html"><span class="nav-icon"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 2C8 6 6 9.5 6 12.5 6 16 9 20 12 22c3-2 6-6 6-9.5C18 9.5 16 6 12 2z" fill="currentColor"/></svg></span><span class="nav-label">Support</span></a>
+    <div class="nav-indicator" aria-hidden="true"></div>
+  </nav>
+
+</body>
+</html>

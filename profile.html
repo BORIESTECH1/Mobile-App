@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Profile - Fast & Reliable Bank</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="auth.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+  <h2>💳 Fast &amp; Reliable Bank</h2>
+    <div class="topbar-actions">
+      <div class="topbar-user">
+        <img id="userAvatar" class="avatar" alt="Profile" src="" style="display:none">
+        <span id="userDisplay"></span>
+      </div>
+      <a class="interfaces-link" href="interfaces.html" title="All Interfaces" aria-label="All Interfaces">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5" fill="none"/>
+          <path d="M12 7l3 2-2 3-3-2 2-3z" fill="currentColor"/>
+        </svg>
+      </a>
+    </div>
+  </header>
+
+  <main class="center profile-root">
+    <section class="profile-hero card-surface">
+      <div class="hero-inner">
+        <div class="avatar-block">
+          <img id="profileAvatarPreview" src="" alt="Avatar preview" class="avatar avatar-xxl">
+          <div class="avatar-meta">
+            <h3 id="profileUsername">-</h3>
+            <p id="accountNumber" class="account-number">-</p>
+          </div>
+        </div>
+        <div class="hero-stats">
+          <div class="stat">
+            <div class="stat-label">Balance</div>
+            <div id="profileBalance" class="stat-value">₦250,000</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Tier</div>
+            <div id="accountTier" class="stat-value">Bronze</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Account</div>
+            <div id="profileAcctNumber" class="stat-value">-</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="profile-grid">
+      <form class="profile-form card-surface" id="profileForm" onsubmit="return false;">
+        <h3>Personal information</h3>
+        <div id="formLive" class="visually-hidden" aria-live="polite" aria-atomic="true"></div>
+        <div class="avatar-upload">
+          <input id="avatarInput" type="file" accept="image/*" aria-label="Upload profile picture" style="display:none">
+          <button id="btnChooseImage" class="btn-ghost" type="button">Choose image</button>
+          <div class="avatar-actions">
+            <button id="btnUpload" class="primary" type="button" disabled>Upload & Save</button>
+            <button id="btnRemove" class="btn-ghost" type="button">Remove</button>
+          </div>
+        </div>
+
+        <div class="form-row two-col">
+          <div class="field">
+            <label for="displayName">Full name</label>
+            <input id="displayName" type="text" placeholder="Your full name">
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" type="email" placeholder="you@example.com">
+          </div>
+        </div>
+
+        <div class="form-row two-col">
+          <div class="field">
+            <label for="phone">Phone</label>
+            <input id="phone" type="tel" placeholder="+2348012345678">
+          </div>
+          <div class="field">
+            <label for="address">Address</label>
+            <input id="address" type="text" placeholder="Your address">
+          </div>
+        </div>
+
+        <div class="form-row two-col">
+          <div class="field" id="bvnField">
+            <label for="bvn">BVN</label>
+            <input id="bvn" type="text" placeholder="Bank Verification Number" inputmode="numeric">
+            <small id="bvnError" class="error" role="status" aria-live="polite" aria-atomic="true">BVN must be exactly 11 digits</small>
+          </div>
+          <div class="field">
+            <label for="nin">NIN</label>
+            <input id="nin" type="text" placeholder="National ID Number">
+          </div>
+        </div>
+
+        <div class="profile-actions">
+          <button id="btnSaveProfile" class="primary" type="button">Save Profile</button>
+          <a href="index.html" class="btn-ghost">Back to app</a>
+        </div>
+      </form>
+
+      <aside class="profile-side">
+        <div class="card-surface info-card">
+          <h4>Account details</h4>
+          <p id="profileAcctName">Account Name: -</p>
+          <div class="mini-row">
+            <div>
+              <small class="muted">Account No</small>
+              <div id="profileAcctNumberSmall" class="mono">-</div>
+            </div>
+            <div>
+              <small class="muted">Current Balance</small>
+              <div id="profileBalanceSmall" class="mono">₦250,000</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-surface info-card">
+          <h4>Security & Location</h4>
+          <p id="locationStatus">Location: not enabled</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+            <button id="btnEnableLocation" class="primary" type="button">Enable Location</button>
+            <button id="btnRefreshLocation" class="btn-ghost" type="button">Refresh</button>
+          </div>
+        </div>
+
+        <div class="card-surface info-card">
+          <h4>Recent Transactions</h4>
+          <div class="activity-list" id="txList">No transactions yet</div>
+        </div>
+
+        <div class="card-surface info-card">
+          <h4>Your Reports</h4>
+          <div id="reportList">No reports</div>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <!-- Accessible toast container (non-blocking notifications) -->
+  <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.checkAuth) window.checkAuth();
+      if (window.loadUser) window.loadUser();
+      if (window.loadProfile) window.loadProfile();
+
+      // Elements
+      const avatarInput = document.getElementById('avatarInput');
+      const btnChoose = document.getElementById('btnChooseImage');
+      const btnUpload = document.getElementById('btnUpload');
+      const btnRemove = document.getElementById('btnRemove');
+      const profilePreview = document.getElementById('profileAvatarPreview');
+      const topAvatar = document.getElementById('userAvatar');
+
+      // Helpers: initials and deterministic color
+      function initialsFromName(name){
+        if (!name) return '?';
+        const parts = name.trim().split(/\s+/).filter(Boolean);
+        if (parts.length === 1) return parts[0].slice(0,2).toUpperCase();
+        return (parts[0][0] + parts[parts.length-1][0]).toUpperCase();
+      }
+      function colorFromString(s){
+        const colors = ['#0066ff','#00c9a7','#ff7a59','#8e44ad','#f59e0b','#06b6d4','#ef4444'];
+        let h=0; for(let i=0;i<s.length;i++) h = ((h<<5)-h) + s.charCodeAt(i); return colors[Math.abs(h) % colors.length];
+      }
+      function svgDataUrlForInitials(initials, size=256, bg='#0066ff'){
+        const fg = '#ffffff';
+        const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='${size}' height='${size}' viewBox='0 0 ${size} ${size}'><rect rx='20' width='100%' height='100%' fill='${bg}'/><text x='50%' y='54%' font-size='${Math.floor(size/2)}' text-anchor='middle' fill='${fg}' font-family='Segoe UI, Roboto, Arial' dominant-baseline='middle'>${initials}</text></svg>`;
+        return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+      }
+      function setAvatarDataUrl(dataUrl){
+        if (profilePreview) profilePreview.src = dataUrl;
+        if (topAvatar){ topAvatar.src = dataUrl; topAvatar.style.display = 'inline-block'; }
+      }
+      function setInitialsAvatar(name){
+        const initials = initialsFromName(name || 'User');
+        const color = colorFromString(name || 'user');
+        setAvatarDataUrl(svgDataUrlForInitials(initials, 256, color));
+      }
+
+      // Toast helper (replaces alert)
+      const toastContainer = document.getElementById('toastContainer');
+      function showToast(message, type='info', timeout=3500){
+        if (!toastContainer) return;
+        const el = document.createElement('div');
+        el.className = 'toast ' + (type || 'info');
+        el.setAttribute('role','status');
+        el.innerHTML = `<div class="toast-body">${message}</div>`;
+        toastContainer.appendChild(el);
+        // announce through formLive as well for assistive tech
+        announce(message);
+        setTimeout(()=>{ el.classList.add('visible'); }, 20);
+        setTimeout(()=>{ el.classList.remove('visible'); setTimeout(()=>el.remove(),300); }, timeout);
+      }
+
+      // File picker UX
+      btnChoose?.addEventListener('click', () => avatarInput.click());
+      avatarInput?.addEventListener('change', () => {
+        const file = avatarInput.files && avatarInput.files[0];
+        if (!file) return;
+        const fr = new FileReader();
+        fr.onload = () => {
+          setAvatarDataUrl(fr.result);
+          if (btnUpload) btnUpload.disabled = false;
+        };
+        fr.readAsDataURL(file);
+      });
+
+      btnUpload?.addEventListener('click', async () => {
+        const file = avatarInput.files && avatarInput.files[0];
+        if (!file) { showToast('Pick an image file first', 'info'); return; }
+        try {
+          await window.setProfilePictureFromFile(file);
+          if (btnUpload) btnUpload.disabled = true;
+          avatarInput.value = '';
+          showToast('Profile image updated', 'success');
+  } catch (e){ console.error(e); showToast('Failed to upload image', 'danger'); }
+      });
+
+      btnRemove?.addEventListener('click', () => {
+        const user = localStorage.getItem('loggedInUser');
+        if (!user) { showToast('Not logged in', 'info'); return; }
+        const profiles = JSON.parse(localStorage.getItem('bt_profiles') || '{}');
+        if (profiles[user]) { delete profiles[user].avatar; localStorage.setItem('bt_profiles', JSON.stringify(profiles)); }
+        // fallback to initials
+        const name = (profiles[user] && profiles[user].displayName) || user;
+        setInitialsAvatar(name);
+        if (window.loadProfile) window.loadProfile();
+        showToast('Profile picture removed', 'info');
+      });
+
+      // BVN inline validation + form-level ARIA announcements
+      const bvnEl = document.getElementById('bvn');
+      const bvnField = document.getElementById('bvnField');
+      const bvnError = document.getElementById('bvnError');
+      const formLive = document.getElementById('formLive');
+      function announce(msg){ if (formLive) formLive.textContent = msg; }
+      if (bvnEl){
+        bvnEl.addEventListener('input', () => {
+          const v = bvnEl.value.replace(/\D/g,'').slice(0,11);
+          bvnEl.value = v;
+          // remove error while typing
+          if (v.length === 11){ bvnField.classList.remove('error'); bvnError.textContent = '';} else { bvnError.textContent = 'BVN must be exactly 11 digits'; }
+        });
+        bvnEl.addEventListener('blur', () => {
+          if (bvnEl.value && bvnEl.value.length !== 11){ bvnField.classList.add('error'); bvnError.textContent = 'BVN must be exactly 11 digits'; announce('BVN must be exactly 11 digits'); } else { bvnField.classList.remove('error'); bvnError.textContent = ''; }
+        });
+      }
+
+      // Email and phone validation helpers
+      const emailEl = document.getElementById('email');
+      const phoneEl = document.getElementById('phone');
+      function isValidEmail(v){
+        if (!v) return false;
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+      }
+      function isValidPhone(v){
+        if (!v) return false;
+        // Basic E.164-ish: optional +, then 7-15 digits
+        return /^\+?\d{7,15}$/.test(v.replace(/[\s()-]/g,''));
+      }
+      function showFieldError(el, msg){ const fld = el.closest('.field'); if (fld){ fld.classList.add('error'); const small = fld.querySelector('.error'); if (small) small.textContent = msg; announce(msg); } }
+      function clearFieldError(el){ const fld = el.closest('.field'); if (fld){ fld.classList.remove('error'); const small = fld.querySelector('.error'); if (small) small.textContent = ''; } }
+
+      if (emailEl){ emailEl.addEventListener('blur', ()=>{ if (emailEl.value && !isValidEmail(emailEl.value)){ showFieldError(emailEl,'Please enter a valid email address'); } else { clearFieldError(emailEl); } }); }
+      if (phoneEl){ phoneEl.addEventListener('blur', ()=>{ if (phoneEl.value && !isValidPhone(phoneEl.value)){ showFieldError(phoneEl,'Please enter a valid phone number (digits only, 7-15 digits)'); } else { clearFieldError(phoneEl); } }); }
+
+      // populate profile inputs + initial avatar fallback
+      const user = localStorage.getItem('loggedInUser');
+      if (user){
+        const profiles = JSON.parse(localStorage.getItem('bt_profiles') || '{}');
+        const p = profiles[user] || {};
+        document.getElementById('displayName').value = p.displayName || '';
+        document.getElementById('email').value = p.email || '';
+        document.getElementById('phone').value = p.phone || '';
+        document.getElementById('address').value = p.address || '';
+        document.getElementById('bvn').value = p.bvn || '';
+        document.getElementById('nin').value = p.nin || '';
+        if (p.avatar){ setAvatarDataUrl(p.avatar); }
+        else setInitialsAvatar(p.displayName || user);
+      } else {
+        setInitialsAvatar('User');
+      }
+
+      // Save profile button saves all fields into the per-user profile store
+      document.getElementById('btnSaveProfile')?.addEventListener('click', () => {
+        const user = localStorage.getItem('loggedInUser');
+  if (!user) return showToast('Not logged in', 'danger');
+        const displayName = (document.getElementById('displayName')?.value || '').trim();
+        const email = (document.getElementById('email')?.value || '').trim();
+        const phone = (document.getElementById('phone')?.value || '').trim();
+        const address = (document.getElementById('address')?.value || '').trim();
+        const bvn = (document.getElementById('bvn')?.value || '').trim();
+        const nin = (document.getElementById('nin')?.value || '').trim();
+
+        // client-side validation; stop save if invalid
+        let firstInvalid = null;
+        if (bvn && bvn.length !== 11){ showFieldError(bvnEl, 'BVN must be exactly 11 digits'); firstInvalid = firstInvalid || bvnEl; }
+        if (email && !isValidEmail(email)){ showFieldError(emailEl, 'Please enter a valid email address'); firstInvalid = firstInvalid || emailEl; }
+        if (phone && !isValidPhone(phone)){ showFieldError(phoneEl, 'Please enter a valid phone number (digits only, 7-15 digits)'); firstInvalid = firstInvalid || phoneEl; }
+  if (firstInvalid){ firstInvalid.focus(); return; }
+
+        const toSave = { displayName, email, phone, address, bvn, nin };
+  window.saveProfile(toSave);
+        if (window.loadProfile) window.loadProfile();
+        if (window.loadUser) window.loadUser();
+        // reflect updated initials/avatar if user has no avatar
+        const profiles = JSON.parse(localStorage.getItem('bt_profiles') || '{}');
+        const p = profiles[user] || {};
+        if (!p.avatar) setInitialsAvatar(displayName || user);
+        // update topbar user display immediately
+        const userDisplay = document.getElementById('userDisplay');
+        if (userDisplay) userDisplay.textContent = displayName || user;
+        announce('Profile saved');
+        showToast('Profile saved', 'success');
+      });
+
+      // render transactions and reports for current user (unchanged)
+      const txList = document.getElementById('txList');
+      const reportList = document.getElementById('reportList');
+      const profileBalance = document.getElementById('profileBalance');
+      const profileAcctNumber = document.getElementById('profileAcctNumber');
+      if (user) {
+        // balance
+        const prefs = JSON.parse(localStorage.getItem('bt_prefs') || '{}');
+        const hidden = prefs[user] && prefs[user].hideBalance;
+        const bal = window._bt_balance_display || '₦250,000';
+        if (profileBalance) profileBalance.textContent = 'Balance: ' + (hidden ? '••••••' : bal);
+        const smallBalEl = document.getElementById('profileBalanceSmall');
+        if (smallBalEl) smallBalEl.textContent = (hidden ? '••••••' : bal);
+
+        // account number and account name
+        const profiles = JSON.parse(localStorage.getItem('bt_profiles') || '{}');
+        const acct = (profiles[user] && profiles[user].accountNumber) || (JSON.parse(localStorage.getItem('bt_users')||'{}')[user] || {}).accountNumber || '-';
+        if (profileAcctNumber) profileAcctNumber.textContent = 'Account No: ' + acct;
+        const smallAcctEl = document.getElementById('profileAcctNumberSmall');
+        if (smallAcctEl) smallAcctEl.textContent = acct;
+        const acctNameEl = document.getElementById('profileAcctName');
+        const acctName = (profiles[user] && profiles[user].displayName) || user || '-';
+        if (acctNameEl) acctNameEl.textContent = 'Account Name: ' + acctName;
+
+        // location status
+        const locStatus = document.getElementById('locationStatus');
+        if (profiles[user] && profiles[user].location) {
+          const loc = profiles[user].location;
+          if (locStatus) locStatus.innerHTML = `Location: <a href="https://www.google.com/maps?q=${loc.lat},${loc.lon}" target="_blank">View</a> (updated ${new Date(loc.time).toLocaleString()})`;
+        } else {
+          if (locStatus) locStatus.textContent = 'Location: not enabled';
+        }
+
+        // transaction activity -> compute average tx/day over last 7 days for tier
+        const historyAll = JSON.parse(localStorage.getItem('history') || '[]');
+        const myTxAll = historyAll.filter(t => t.user === user).slice();
+        const now = Date.now();
+        const dayMs = 24*60*60*1000;
+        const days = 7;
+        const counts = {};
+        myTxAll.forEach(tx => {
+          const d = new Date(tx.time);
+          const key = d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate();
+          counts[key] = (counts[key] || 0) + 1;
+        });
+        let total = 0;
+        for (let i=0;i<days;i++) {
+          const d = new Date(now - i*dayMs);
+          const key = d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate();
+          total += (counts[key] || 0);
+        }
+        const avg = total / days;
+        const tierEl = document.getElementById('accountTier');
+        if (tierEl) {
+          let tier = 'Bronze';
+          if (avg >= 10) tier = 'Platinum';
+          else if (avg >= 5) tier = 'Gold';
+          else if (avg >= 2) tier = 'Silver';
+          tierEl.textContent = `Tier: ${tier} (avg ${avg.toFixed(1)} tx/day)`;
+        }
+        const progressEl = document.getElementById('tierProgress');
+        if (progressEl) {
+          const pct = Math.min(100, Math.round((avg/10)*100));
+          progressEl.style.width = pct + '%';
+        }
+
+        // transactions
+        const history = JSON.parse(localStorage.getItem('history') || '[]');
+        const myTx = history.filter(t => t.user === user).slice().reverse();
+        if (txList) {
+          txList.innerHTML = myTx.length ? myTx.map(t => `<li>${new Date(t.time).toLocaleString()}: ₦${t.amount} → ${t.receiver}</li>`).join('') : '<li>No transactions yet</li>';
+        }
+
+        // reports
+        const reports = JSON.parse(localStorage.getItem('reports') || '[]');
+        const myReports = reports.filter(r => r.name === user || r.email === user || (r.reporter === user));
+        if (reportList) {
+          reportList.innerHTML = myReports.length ? myReports.map(r => `<li>${new Date(r.time).toLocaleString()}: ${r.location} — ${r.message}</li>`).join('') : '<li>No reports</li>';
+        }
+      }
+    });
+  </script>
+</body>
+</html>

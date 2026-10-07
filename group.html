@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Group — Esusu</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div style="display:flex;align-items:center;gap:12px">
+      <a href="groups.html" class="small-link">← Groups</a>
+      <h2 id="groupName">Group</h2>
+    </div>
+    <div id="userDisplay">User</div>
+  </header>
+
+  <main>
+    <section class="group-detail">
+      <div class="panel card-surface">
+        <h3 id="gTitle">Loading…</h3>
+        <p id="gMeta" class="small-link"></p>
+        <div style="margin-top:12px">
+          <button id="btnTopUp">Top up my wallet</button>
+          <button id="btnProcess" class="btn-ghost">Process today's payout</button>
+          <button id="btnGroupSettings" class="btn-ghost">Group settings</button>
+        </div>
+
+        <h4 style="margin-top:16px">Members</h4>
+        <div id="membersList" class="contrib-list"></div>
+      </div>
+
+      <aside class="panel card-surface">
+        <h4>Contributions (today)</h4>
+        <div id="contribList" class="contrib-list"></div>
+        <div style="margin-top:12px">
+          <strong>Wallet:</strong> <span id="walletAmt">₦0</span>
+          <div style="margin-top:8px"><button id="btnWithdraw" class="btn-ghost">Withdraw</button></div>
+        </div>
+            <h4 style="margin-top:16px">Payout history</h4>
+            <div id="payoutHistory" class="payout-history"></div>
+      </aside>
+    </section>
+  </main>
+
+<script src="script.js"></script>
+<script>
+  function showFallback(msg){ const el = document.createElement('div'); el.className='notification'; el.style.zIndex=99999; el.style.position='fixed'; el.style.right='20px'; el.style.bottom='20px'; el.textContent=msg; document.body.appendChild(el); setTimeout(()=>el.remove(),3000); }
+  // Central notify helper: prefer showToast, then showNotification, finally inline fallback
+  function notify(msg, type='info', opts){ if (window.showToast) return window.showToast(msg, type, opts); if (window.showNotification) return window.showNotification(msg); return showFallback(msg); }
+  function show(msg){ return notify(msg,'info'); }
+  function qS(q){ return document.querySelector(q); }
+  function getParam(name){ const url = new URL(location.href); return url.searchParams.get(name); }
+
+  async function render(){
+    const id = getParam('id'); if(!id) return show('Missing group id');
+  const g = window.esusu.getGroup(id);
+  if(!g) return show('Group not found');
+  // mark current user as present when viewing the group
+  try{ const current = localStorage.getItem('loggedInUser') || ''; if (current && window.esusu && window.esusu.updateLastSeen) window.esusu.updateLastSeen(id, current); }catch(e){}
+    qS('#groupName').textContent = g.name;
+    qS('#gTitle').textContent = g.name;
+    qS('#gMeta').textContent = `Contrib: ₦${g.contributionAmount} • Starts: ${g.startDate}`;
+  // show total collected so far for this group
+  const totalCollected = (window.esusu.getTotalCollected) ? window.esusu.getTotalCollected(id) : (JSON.parse(localStorage.getItem('esusu_contributions')||'[]').filter(c=>c.groupId===id && c.status==='paid').reduce((s,c)=>s+Number(c.amount||0),0));
+  qS('#gMeta').textContent = `Contrib: ₦${g.contributionAmount} • Starts: ${g.startDate} • Collected: ₦${totalCollected}`;
+    const members = g.members || [];
+    const membersList = qS('#membersList'); membersList.innerHTML='';
+
+    // who receives today's payout
+    const today = new Date().toISOString().slice(0,10);
+    const beneficiary = (window.esusu.getBeneficiary && window.esusu.getBeneficiary(id, today)) || null;
+
+    members.forEach(m=>{
+      const paidRecord = (window.esusu.getContributionsForDate ? window.esusu.getContributionsForDate(id, today).find(c=>c.userId===m.userId) : null);
+      const paid = paidRecord && paidRecord.status === 'paid';
+      const paidAt = paidRecord && paidRecord.paid_at ? new Date(paidRecord.paid_at) : null;
+      const lastSeen = m.last_seen ? timeAgo(new Date(m.last_seen)) : '—';
+      // per-member total contributed (all paid contributions)
+      const memberTotal = (window.esusu.getMemberTotalContributed) ? window.esusu.getMemberTotalContributed(id, m.userId) : (JSON.parse(localStorage.getItem('esusu_contributions')||'[]').filter(c=>c.groupId===id && c.userId===m.userId && c.status==='paid').reduce((s,c)=>s+Number(c.amount||0),0));
+      const isBeneficiary = beneficiary && beneficiary.userId === m.userId;
+      // trust score
+      let trust = { score:0, paid:0, total:0 };
+      try{ trust = (window.esusu.getTrustScore) ? window.esusu.getTrustScore(m.userId) : trust; }catch(e){}
+      const div = document.createElement('div'); div.className='member-item';
+      div.innerHTML = `
+        <div class="member-meta">
+          <div class="member-avatar">${(m.userId||'U').slice(0,2).toUpperCase()}</div>
+          <div style="flex:1">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <strong>${escapeHtml(m.userId)}</strong>
+              <div style="display:flex;gap:8px;align-items:center"><div class="trust-badge">${trust.score}%</div><div class="small-link">${isBeneficiary ? '<span class="badge">Beneficiary today</span>' : ''} <span class="small-link">Saved: ₦${memberTotal}</span></div></div>
+            </div>
+            <div class="small-link">Joined: ${new Date(m.joined_at).toLocaleDateString()} • Last seen: ${escapeHtml(lastSeen)}</div>
+          </div>
+        </div>
+        <div class="member-actions">
+          <div class="member-amount ${paid ? 'status-paid' : 'status-pending'}">${paid ? 'PAID' : 'PENDING'} • ₦${g.contributionAmount}</div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            ${paid ? `<div class="small-link">${paidAt ? paidAt.toLocaleString() : ''}</div>` : `<button class="btn-ghost mark-paid" data-user="${escapeHtml(m.userId)}">Mark Paid</button>`}
+          </div>
+        </div>
+      `;
+      membersList.appendChild(div);
+    });
+
+    // contribs today (summary)
+    const contribs = window.esusu.getContributionsForDate ? window.esusu.getContributionsForDate(id, today) : (JSON.parse(localStorage.getItem('esusu_contributions')||'[]')).filter(c=>c.groupId===id && c.scheduled_for_date===today);
+    const cl = qS('#contribList'); cl.innerHTML='';
+    contribs.forEach(c=>{ const div = document.createElement('div'); div.className='contrib-item'; div.innerHTML = `<div>${escapeHtml(c.userId)}</div><div class="small-link">${escapeHtml(c.status)} • ₦${c.amount} ${c.paid_at ? '• ' + (new Date(c.paid_at)).toLocaleTimeString() : ''}</div>`; cl.appendChild(div); });
+    qS('#walletAmt').textContent = '₦' + (window.esusu.getWallet(localStorage.getItem('loggedInUser') || 'guest') || 0);
+    // show group escrow balance if present
+    try{ const escrow = (window.esusu.getGroupEscrow ? window.esusu.getGroupEscrow(id) : (window.esusu.getGroup ? (window.esusu.getGroup(id).escrow||0) : 0));
+      // create or update escrow display
+      let esc = document.getElementById('groupEscrow'); if (!esc){ esc = document.createElement('div'); esc.id='groupEscrow'; esc.style.marginTop='8px'; qS('#walletAmt').parentNode.appendChild(esc); }
+      esc.innerHTML = `<strong>Group escrow:</strong> ₦${escrow}`;
+    }catch(e){}
+
+    // render payout history for this group
+    try{
+      const payouts = JSON.parse(localStorage.getItem('esusu_payouts')||'[]').filter(p=>p.groupId===id).sort((a,b)=>new Date(b.processed_at)-new Date(a.processed_at));
+      const ph = qS('#payoutHistory'); ph.innerHTML = '';
+      if (!payouts.length) ph.innerHTML = '<div class="small-link">No payouts yet.</div>';
+      payouts.forEach(p=>{
+        const d = new Date(p.processed_at).toLocaleString();
+        const div = document.createElement('div'); div.className = 'payout-item';
+        const grpName = p.groupName || p.groupId || '';
+        const benName = p.beneficiaryName || p.beneficiary_userId || '';
+        const groupLink = `group.html?id=${encodeURIComponent(p.groupId)}`;
+        div.innerHTML = `<div style="display:flex;justify-content:space-between"><div><strong>₦${Number(p.amount||0)}</strong> to <strong>${escapeHtml(benName)}</strong> <span class="small-link">in <a href="${escapeHtml(groupLink)}">${escapeHtml(grpName)}</a></span></div><div class="small-link">${escapeHtml(d)}</div></div>`;
+        ph.appendChild(div);
+      });
+    }catch(e){ /* ignore */ }
+
+    // show pending payouts (awaiting approvals)
+    try{
+      const pending = JSON.parse(localStorage.getItem('esusu_payouts')||'[]').filter(p=>p.groupId===id && p.status === 'pending').sort((a,b)=>new Date(b.processed_at)-new Date(a.processed_at));
+      if (pending && pending.length){
+        const header = document.createElement('h4'); header.innerText = 'Pending payouts'; ph.parentNode.appendChild(header);
+        const pendingList = document.createElement('div'); pendingList.className = 'payout-history';
+        pending.forEach(p=>{
+          const d = new Date(p.processed_at).toLocaleString();
+          const item = document.createElement('div'); item.className = 'payout-item pending';
+          const approvals = p.approvals || [];
+          const approveBtn = `<button class="btn-ghost btn-approve" data-id="${p.id}">Approve</button>`;
+          const releaseBtn = `<button class="primary btn-release" data-id="${p.id}">Release</button>`;
+          const disputeBtn = `<button class="btn-ghost btn-dispute" data-id="${p.id}">Dispute</button>`;
+          item.innerHTML = `<div style="display:flex;justify-content:space-between"><div><strong>₦${Number(p.amount||0)}</strong> to <strong>${escapeHtml(p.beneficiaryName||p.beneficiary_userId||'—')}</strong></div><div class="small-link">${escapeHtml(d)}</div></div><div class="small-link">Approvals: ${approvals.length} • ${approveBtn} ${releaseBtn} ${disputeBtn}</div>`;
+          pendingList.appendChild(item);
+        });
+        ph.parentNode.appendChild(pendingList);
+
+        // wire approve/release/dispute buttons
+        Array.from(document.querySelectorAll('.btn-approve')).forEach(b=> b.addEventListener('click', async (e)=>{
+          const id = b.getAttribute('data-id'); const user = localStorage.getItem('loggedInUser') || '';
+          try{ const res = window.esusu.approvePayout(id, user); notify(res.released ? 'Payout released' : 'Approval recorded','success'); render(); }catch(err){ notify(err && err.message ? err.message : String(err),'danger'); }
+        }));
+        Array.from(document.querySelectorAll('.btn-release')).forEach(b=> b.addEventListener('click', async (e)=>{
+          const id = b.getAttribute('data-id'); const user = localStorage.getItem('loggedInUser') || '';
+          try{ const res = window.esusu.releasePayout(id, user); notify('Payout released','success'); render(); }catch(err){ notify(err && err.message ? err.message : String(err),'danger'); }
+        }));
+        Array.from(document.querySelectorAll('.btn-dispute')).forEach(b=> b.addEventListener('click', async (e)=>{
+          const id = b.getAttribute('data-id'); const user = localStorage.getItem('loggedInUser') || '';
+          try{ const reason = await window.openInputModal ? await window.openInputModal({ title: 'Dispute reason', label: 'Reason', placeholder: 'Why are you disputing?' }) : 'Dispute'; if (!reason) return; window.esusu.createDispute(id, user, reason); notify('Dispute created','info'); render(); }catch(err){ notify(err && err.message ? err.message : String(err),'danger'); }
+        }));
+      }
+    }catch(e){ }
+
+    // show pending escrow withdrawals (awaiting approvals)
+    try{
+      const pendingW = JSON.parse(localStorage.getItem('esusu_withdrawals')||'[]').filter(w=>w.groupId===id && w.status === 'pending').sort((a,b)=>b.requested_at - a.requested_at);
+      if (pendingW && pendingW.length){
+        const header = document.createElement('h4'); header.innerText = 'Pending withdrawals'; ph.parentNode.appendChild(header);
+        const list = document.createElement('div'); list.className = 'payout-history';
+        pendingW.forEach(w=>{
+          const d = new Date(w.requested_at).toLocaleString();
+          const item = document.createElement('div'); item.className = 'payout-item pending';
+          const approvals = w.approvals || [];
+          const approveBtn = `<button class="btn-ghost btn-approve-withdraw" data-id="${w.id}">Approve</button>`;
+          const releaseBtn = `<button class="primary btn-release-withdraw" data-id="${w.id}">Release</button>`;
+          item.innerHTML = `<div style="display:flex;justify-content:space-between"><div><strong>₦${Number(w.amount||0)}</strong> withdrawal by <strong>${escapeHtml(w.userId)}</strong></div><div class="small-link">${escapeHtml(d)}</div></div><div class="small-link">Approvals: ${approvals.length} • ${approveBtn} ${releaseBtn}</div>`;
+          list.appendChild(item);
+        });
+        ph.parentNode.appendChild(list);
+
+        Array.from(document.querySelectorAll('.btn-approve-withdraw')).forEach(b=> b.addEventListener('click', async (e)=>{
+          const idw = b.getAttribute('data-id'); const user = localStorage.getItem('loggedInUser') || '';
+          try{ const res = window.esusu.approveEscrowWithdrawal(idw, user); notify(res.released ? 'Withdrawal released' : 'Approval recorded','success'); render(); }catch(err){ notify(err && err.message ? err.message : String(err),'danger'); }
+        }));
+        Array.from(document.querySelectorAll('.btn-release-withdraw')).forEach(b=> b.addEventListener('click', async (e)=>{
+          const idw = b.getAttribute('data-id'); const user = localStorage.getItem('loggedInUser') || '';
+          try{ const res = window.esusu.releaseEscrowWithdrawal(idw, user); notify('Withdrawal released','success'); render(); }catch(err){ notify(err && err.message ? err.message : String(err),'danger'); }
+        }));
+      }
+    }catch(e){ }
+
+    // attach mark-paid handlers
+    Array.from(document.querySelectorAll('.mark-paid')).forEach(btn => {
+      btn.addEventListener('click', async (e)=>{
+        const user = btn.getAttribute('data-user');
+        try{
+          // optional note
+          let note = '';
+          if (typeof window.openInputModal === 'function') {
+            note = await window.openInputModal({ title: 'Payment note (optional)', label: 'Note', placeholder: 'e.g., cash, bank transfer' }) || '';
+          }
+          // ask whether to debit wallet
+          let debit = false;
+          if (typeof window.openConfirmModal === 'function') {
+            debit = await window.openConfirmModal({ title: 'Record & debit wallet', body: `Debit ${user}'s wallet for ₦${g.contributionAmount}? Select No to only record payment.` });
+          }
+          await window.esusu.markAsPaid(id, user, today, { debitWallet: !!debit, amount: Number(g.contributionAmount), note });
+          notify(`Marked ${user} as paid for ${today}`, 'success');
+          render();
+        }catch(err){ notify(err && err.message ? err.message : String(err), 'danger'); }
+      });
+    });
+  }
+
+  // small helper for relative time
+  function timeAgo(date){ try{ const s = Math.floor((Date.now() - date.getTime())/1000); if (s<60) return s + 's ago'; if (s<3600) return Math.floor(s/60) + 'm ago'; if (s<86400) return Math.floor(s/3600) + 'h ago'; return Math.floor(s/86400) + 'd ago'; }catch(e){ return '—'; } }
+
+  qS('#btnTopUp').addEventListener('click', async ()=>{
+    try{
+      let user = localStorage.getItem('loggedInUser') || '';
+      if (!user) {
+        const u = await window.openInputModal({ title: 'Your user id', label: 'User id', placeholder: 'alice' });
+        if (!u) return; user = u;
+      }
+      let amt = 0;
+      const v = await window.openInputModal({ title: 'Top up amount', label: 'Amount (NGN)', placeholder: '500', type: 'number', defaultValue: '500' });
+      amt = Number(v) || 0;
+      if (amt <= 0) return;
+      window.esusu.topUpWallet(user, amt);
+      // update last seen for this user in this group
+      try{ if (window.esusu && window.esusu.updateLastSeen) window.esusu.updateLastSeen(getParam('id'), user); }catch(e){}
+      show('Wallet topped up: ₦'+amt);
+      render();
+    }catch(e){ show('Top up failed'); }
+  });
+
+  // withdraw handler
+  qS('#btnWithdraw')?.addEventListener('click', async ()=>{
+    try{
+      let user = localStorage.getItem('loggedInUser') || '';
+      if (!user) {
+        const u = await window.openInputModal({ title: 'Your user id', label: 'User id', placeholder: 'alice' });
+        if (!u) return; user = u;
+      }
+      const v = await window.openInputModal({ title: 'Withdraw amount (NGN)', label: 'Amount', placeholder: '500', type: 'number' });
+      const amt = Number(v) || 0; if (amt <= 0) return;
+      const dest = await window.openInputModal({ title: 'Destination (bank/account or cash)', label: 'Destination', placeholder: 'Bank - Account or Cash' }) || '';
+      const confirm = await window.openConfirmModal({ title: 'Confirm withdrawal', body: `Withdraw ₦${amt} to ${dest || 'destination'}?` });
+      if (!confirm) return;
+      // require PIN confirmation
+      let okPin = false;
+      if (typeof window.openInputModal === 'function'){
+        const pin = await window.openInputModal({ title: 'Enter PIN to confirm', label: 'PIN', type: 'password' });
+        if (pin) {
+          try{ okPin = await window.verifyPinInput(pin); }catch(e){ okPin = false; }
+        }
+      }
+      if (!okPin) return window.showToast && window.showToast('PIN required to withdraw','danger');
+
+      // if group escrow is enabled and amount is <= escrow, offer to request escrow withdrawal (requires approvals)
+      try{
+        const gid = getParam('id'); const g = window.esusu.getGroup(gid);
+        if (g && g.settings && g.settings.escrowEnabled){ const escrowAmt = window.esusu.getGroupEscrow ? window.esusu.getGroupEscrow(gid) : (g.escrow||0); if (Number(escrowAmt) >= Number(amt)){
+            const useEscrow = await window.openConfirmModal({ title: 'Use group escrow?', body: `Withdraw ₦${amt} from group escrow (requires group approvals)?` });
+            if (useEscrow){ // create a withdrawal request
+                window.esusu.requestEscrowWithdrawal(gid, user, Number(amt), { dest });
+                window.showToast && window.showToast('Escrow withdrawal requested','info'); render(); return;
+            }
+        } }
+      }catch(e){}
+
+      // call esusu withdraw API
+      if (!window.esusu || !window.esusu.withdrawFromWallet) {
+        window.showToast && window.showToast('Withdraw not available','info'); return;
+      }
+      const res = await window.esusu.withdrawFromWallet(user, amt, { dest });
+      if (res && res.success) {
+        window.showToast && window.showToast('Withdrawal queued: ₦' + amt, 'success');
+      } else {
+        window.showToast && window.showToast('Withdrawal failed: ' + (res && res.error ? res.error : 'unknown'), 'danger');
+      }
+      render();
+    }catch(e){ window.showToast && window.showToast(String(e),'danger'); }
+  });
+
+  qS('#btnProcess').addEventListener('click', ()=>{
+    try{
+      const id = getParam('id'); const res = window.esusu.processTodayPayout(id);
+      show('Payout processed: ₦'+ (res.payout.amount || 0) + ' to ' + (res.payout.beneficiary_userId || '—'));
+      render();
+    }catch(e){ show(e.message); }
+  });
+
+  render();
+
+  // wire group settings button (opens settings modal implemented in script.js)
+  try{
+    const gs = qS('#btnGroupSettings'); if (gs){ gs.addEventListener('click', ()=>{ const id = getParam('id'); if (!id) return notify('Missing group id','info'); if (typeof window.openGroupSettingsModal === 'function') window.openGroupSettingsModal(id); else notify('Group settings unavailable','info'); }); }
+  }catch(e){}
+</script>
+</body>
+</html>

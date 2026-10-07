@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Nearby POS</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="auth.js" defer></script>
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <header class="topbar">
+    <h2>💳 Fast &amp; Reliable Bank</h2>
+        <div style="display:flex;align-items:center;gap:8px;">
+            <img id="userAvatar" class="avatar" alt="Profile" style="display:none" src="">
+            <span id="userDisplay"></span>
+            <a class="interfaces-link" href="interfaces.html" title="All Interfaces" aria-label="All Interfaces" style="margin-left:8px;text-decoration:none;display:inline-flex;align-items:center">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                    <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                    <path d="M12 7l3 2-2 3-3-2 2-3z" fill="currentColor"/>
+                </svg>
+            </a>
+        </div>
+    </header>
+
+    <main class="center">
+        <section>
+            <h1>Trusted POS Locations</h1>
+            <ul>
+                <li>Lagos - Ikeja POS Center</li>
+                <li>Abuja - Wuse Market POS</li>
+                <li>Port Harcourt - Mile 1 POS</li>
+            </ul>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.loadUser) window.loadUser();
+            if (window.loadProfile) window.loadProfile();
+        });
+    </script>
+</body>
+</html>

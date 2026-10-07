@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Fast & Reliable Bank - Login</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js" defer></script>
+    <script src="auth.js" defer></script>
+</head>
+<body>
+    <main class="center">
+        <section class="card-surface login-card" aria-labelledby="loginTitle">
+            <div style="display:flex;gap:18px;align-items:center">
+                <div style="flex:1">
+                    <div class="brand-mark" aria-hidden="true">BT</div>
+                    <h2 id="loginTitle" style="margin:6px 0 4px">Welcome back</h2>
+                    <p class="small-link" style="margin:0 0 12px">Sign in to Fast &amp; Reliable Bank to manage groups, wallets and payouts.</p>
+                    <label class="small-link" for="li_username">User id</label>
+                    <input type="text" id="li_username" placeholder="e.g., alice" aria-label="username">
+                    <label class="small-link" for="li_password">PIN / Password</label>
+                    <input type="password" id="li_password" placeholder="Your PIN or password" aria-label="password">
+                    <div style="display:flex;gap:8px;align-items:center;margin-top:12px">
+                        <button id="btnLogin" class="primary">Sign in</button>
+                        <a href="signup.html" class="small-link">Create account</a>
+                    </div>
+                </div>
+                <div style="width:130px;display:flex;flex-direction:column;align-items:center;gap:10px">
+                    <div class="login-illustration" aria-hidden="true">🔐</div>
+                    <div class="small-link" style="text-align:center;color:var(--muted)">Secure groups • Escrow • Trust scores</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Login loader overlay (hidden by default) -->
+    <div id="loginLoader" class="confirm-modal" style="display:none;align-items:center;justify-content:center;">
+      <div class="confirm-card" style="max-width:360px;text-align:center;padding:20px">
+        <div class="processing-spinner" style="margin:8px auto"></div>
+    <div id="loginLoaderMsg" style="font-weight:700;margin-top:8px">Logging in to Fast &amp; Reliable Bank…</div>
+        <div class="small-link" style="margin-top:6px;color:var(--muted)">Authenticating securely, please wait.</div>
+      </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('btnLogin')?.addEventListener('click', () => window.login && window.login());
+        });
+    </script>
+</body>
+</html>

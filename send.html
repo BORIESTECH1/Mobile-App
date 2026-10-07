@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>Send Money</title>
+        <link rel="stylesheet" href="style.css">
+        <script src="auth.js" defer></script>
+        <script src="script.js" defer></script>
+</head>
+<body>
+    <header class="topbar">
+    <h2>💳 Fast &amp; Reliable Bank</h2>
+        <div style="display:flex;align-items:center;gap:8px;">
+            <img id="userAvatar" class="avatar" alt="Profile" style="display:none" src="">
+            <span id="userDisplay"></span>
+            <a class="interfaces-link" href="interfaces.html" title="All Interfaces" aria-label="All Interfaces" style="margin-left:8px;text-decoration:none;display:inline-flex;align-items:center">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                    <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                    <path d="M12 7l3 2-2 3-3-2 2-3z" fill="currentColor"/>
+                </svg>
+            </a>
+        </div>
+    </header>
+
+    <main class="center">
+        <section>
+                <h2>Send Money</h2>
+                <div class="card-surface" style="padding:12px;max-width:560px">
+                    <label style="display:block;font-weight:700;margin-bottom:6px">Bank</label>
+                    <select id="bankSelect">
+                        <option value="">Select bank</option>
+                        <option value="access">Access Bank</option>
+                        <option value="gtb">Guaranty Trust Bank</option>
+                        <option value="zenith">Zenith Bank</option>
+                        <option value="uba">UBA</option>
+                        <option value="first">First Bank</option>
+                    </select>
+
+                    <label style="display:block;font-weight:700;margin:12px 0 6px">Account number</label>
+                    <div style="display:flex;gap:8px;align-items:center">
+                        <input id="accountNumber" placeholder="0123456789" inputmode="numeric" pattern="[0-9]*" style="flex:1">
+                        <div id="acctLookupSpinner" class="spinner" style="display:none;width:28px;height:28px;border-width:3px"></div>
+                    </div>
+
+                    <div id="accountNameWrap" style="margin-top:10px;display:flex;align-items:center;gap:10px">
+                        <div id="accountAvatar" style="width:40px;height:40px;border-radius:50%;background:linear-gradient(90deg,var(--accent),#1a63e6);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:0.95rem;flex-shrink:0">A</div>
+                        <div style="display:flex;flex-direction:column">
+                            <div id="accountNameDisplay" style="font-weight:800;color:var(--muted)">Account name will appear here</div>
+                            <div id="accountNameHint" style="font-size:0.85rem;color:var(--muted);margin-top:4px">Enter account number to resolve name</div>
+                        </div>
+                        <div id="accountNameStatus" aria-hidden="true"></div>
+                    </div>
+
+                    <label style="display:block;font-weight:700;margin:12px 0 6px">Amount</label>
+                    <input id="amount" type="number" placeholder="Amount">
+
+                    <input type="hidden" id="receiver" />
+                    <div style="display:flex;gap:8px;margin-top:12px;align-items:center">
+                        <button id="btnSend" class="primary" disabled>Send</button>
+                        <button id="btnPreview" class="btn-ghost">Preview</button>
+                    </div>
+                    <p id="fraudResult" style="margin-top:8px"></p>
+                </div>
+            </section>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.checkAuth) window.checkAuth();
+            if (window.loadUser) window.loadUser();
+            if (window.loadProfile) window.loadProfile();
+            // Send button wiring is handled by initSendPage in script.js (uses showConfirm flow)
+        });
+    </script>
+</body>
+</html>

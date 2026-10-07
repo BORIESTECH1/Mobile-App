@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Fast & Reliable Bank - Signup</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js" defer></script>
+    <script src="auth.js" defer></script>
+</head>
+<body>
+    <main class="center">
+        <section class="card-surface login-card" aria-labelledby="signupTitle">
+            <div style="display:flex;gap:18px;align-items:center">
+                <div style="flex:1">
+                    <div class="brand-mark" aria-hidden="true">BT</div>
+                    <h2 id="signupTitle" style="margin:6px 0 4px">Create your account</h2>
+                    <p class="small-link" style="margin:0 0 12px">Join Fast &amp; Reliable Bank — create groups, save together and protect payouts with escrow.</p>
+                    <label class="small-link" for="su_username">User id</label>
+                    <input type="text" id="su_username" placeholder="e.g., alice" aria-label="username">
+                    <label class="small-link" for="su_displayName">Display name</label>
+                    <input type="text" id="su_displayName" placeholder="e.g., Alice Bello" aria-label="display name">
+                    <label class="small-link" for="su_password">PIN / Password</label>
+                    <input type="password" id="su_password" placeholder="Set a PIN or password" aria-label="password">
+                    <label class="small-link" for="su_avatar">Avatar (optional)</label>
+                    <div style="display:flex;gap:8px;align-items:center">
+                        <input type="file" id="su_avatar" accept="image/*" aria-label="avatar file" />
+                        <div style="width:48px;height:48px;border-radius:8px;overflow:hidden;background:var(--muted);display:flex;align-items:center;justify-content:center">
+                            <img id="signupAvatarPreview" alt="avatar preview" style="width:48px;height:48px;object-fit:cover;display:block" src="" />
+                        </div>
+                    </div>
+                    <div id="signupAvatarError" role="alert" style="color:var(--danger);font-size:12px;margin-top:6px;min-height:18px"></div>
+                    <div style="display:flex;gap:8px;align-items:center;margin-top:12px">
+                        <button id="btnSignup" class="primary">Create account</button>
+                        <a href="login.html" class="small-link">Already have an account?</a>
+                    </div>
+                </div>
+                <div style="width:130px;display:flex;flex-direction:column;align-items:center;gap:10px">
+                    <div class="login-illustration" aria-hidden="true">✨</div>
+                    <div class="small-link" style="text-align:center;color:var(--muted)">Secure groups • Escrow • Trust scores</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Signup loader overlay -->
+    <div id="signupLoader" class="confirm-modal" style="display:none;align-items:center;justify-content:center;">
+      <div class="confirm-card" style="max-width:360px;text-align:center;padding:20px">
+        <div class="processing-spinner" style="margin:8px auto"></div>
+    <div id="signupLoaderMsg" style="font-weight:700;margin-top:8px">Creating your Fast &amp; Reliable Bank account…</div>
+        <div class="small-link" style="margin-top:6px;color:var(--muted)">We will set up your profile and secure your groups.</div>
+      </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('btnSignup')?.addEventListener('click', () => window.signup && window.signup());
+        });
+    </script>
+</body>
+</html>

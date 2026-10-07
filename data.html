@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Buy Data</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="auth.js" defer></script>
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+  <h2>💳 Fast &amp; Reliable Bank</h2>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <img id="userAvatar" class="avatar" alt="Profile" style="display:none" src="">
+    <span id="userDisplay"></span>
+    <a class="interfaces-link" href="interfaces.html" title="All Interfaces" aria-label="All Interfaces" style="margin-left:8px;text-decoration:none;display:inline-flex;align-items:center">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+        <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5" fill="none"/>
+        <path d="M12 7l3 2-2 3-3-2 2-3z" fill="currentColor"/>
+      </svg>
+    </a>
+  </div>
+  </header>
+
+  <main class="center">
+    <section>
+      <h2>Buy Data</h2>
+      <p>Choose network and plan</p>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px">
+        <div style="font-weight:600">Networks & Plans</div>
+        <button id="toggleDataPanels" class="btn-ghost mobile-only" title="Hide networks/plans">Hide ▾</button>
+      </div>
+      <div id="dataPanels" class="recent-panel">
+        <div class="networks" id="data_networks"></div>
+        <div class="plans" id="data_plans">
+          <!-- plan tiles populated by script -->
+        </div>
+      </div>
+      <div class="form-row">
+        <div style="display:flex;flex-direction:column">
+          <input id="data_phone" placeholder="Receiver phone">
+          <div id="data_phone_warn" style="font-size:0.85rem;color:#b45a00;margin-top:6px;display:none"></div>
+        </div>
+        <input id="data_amount" type="number" placeholder="Amount (auto from plan)">
+      </div>
+      <div style="display:flex;gap:8px;justify-content:center;margin-top:12px">
+        <button id="btnData" class="primary">Buy Data</button>
+      </div>
+      <p style="text-align:center;margin-top:12px"><a href="index.html">← Back</a></p>
+    </section>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.checkAuth) window.checkAuth();
+      if (window.loadUser) window.loadUser();
+      if (window.loadProfile) window.loadProfile();
+      try { if (window.populateNetworks) window.populateNetworks('data_networks'); } catch(e){}
+      try { if (window.populateDataPlans) window.populateDataPlans('data_plans'); } catch(e){}
+      document.getElementById('btnData')?.addEventListener('click', () => window.processData && window.processData());
+      const dataPhone = document.getElementById('data_phone');
+      if (dataPhone){
+        dataPhone.addEventListener('input', ()=>{ try{ if (window.updatePhoneWarning) window.updatePhoneWarning('data_phone','data_phone_warn'); }catch(e){} });
+      }
+
+      // mobile toggle for networks/plans
+      (function(){
+        const btn = document.getElementById('toggleDataPanels');
+        const panel = document.getElementById('dataPanels');
+        if (!btn || !panel) return;
+        const THRESH = 780;
+        const stored = localStorage.getItem('bt_data_panels_collapsed');
+        function apply(c){ if (c) panel.classList.add('collapsed'); else panel.classList.remove('collapsed'); btn.innerText = c ? 'Show ▸' : 'Hide ▾'; }
+        if (stored !== null) apply(stored === '1'); else apply(window.innerWidth < THRESH);
+        btn.addEventListener('click', ()=>{ const collapsed = panel.classList.toggle('collapsed'); btn.innerText = collapsed ? 'Show ▸' : 'Hide ▾'; localStorage.setItem('bt_data_panels_collapsed', collapsed ? '1' : '0'); });
+      })();
+    });
+  </script>
+</body>
+</html>

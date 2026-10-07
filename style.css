@@ -1,0 +1,698 @@
+:root{
+  /* Fast & Reliable Bank brand: white + blue with a touch of yellow */
+  --bg-1: #ffffff;
+  --glass: rgba(255,255,255,0.95);
+  --accent: #0066ff; /* primary blue */
+  --accent-2: #ffd400; /* touch of yellow */
+  --card: #ffffff;
+  --muted: #6b7280;
+  --text: #0b2545;
+  --danger: #ff3b30;
+}
+
+*{box-sizing:border-box}
+/* Prevent iOS Safari from automatically resizing text and tapping highlights */
+html,body{ -webkit-text-size-adjust:100%; -webkit-tap-highlight-color: transparent; }
+/* respect safe-area insets on iOS devices with notches (applies when JS detects iOS and adds .ios on body) */
+body.ios{ padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); }
+html{font-family:Inter, 'Segoe UI', system-ui, -apple-system, Roboto, 'Helvetica Neue', Arial}
+html,body{height:100%;margin:0}
+/* fluid base font-size for smaller and larger screens */
+body{font-size:clamp(14px, 1.2vw, 16px);background:linear-gradient(180deg,var(--bg-1),#fff);color:var(--text);-webkit-font-smoothing:antialiased}
+
+/* layout */
+header{padding:14px 18px;background:transparent}
+main,section{max-width:1100px;margin:18px auto;padding:0;border-radius:14px;background:transparent}
+section.center{max-width:520px}
+
+/* Reusable white card surface */
+.card-surface{background:var(--card);padding:16px;border-radius:14px;box-shadow:0 10px 30px rgba(16,24,40,0.06);border:1px solid rgba(16,24,40,0.03)}
+/* responsive card padding */
+.card-surface{padding:clamp(12px,2vw,20px)}
+
+/* inputs & buttons */
+input,textarea,button{font:inherit}
+input,textarea{width:100%;padding:12px;border-radius:10px;border:1px solid rgba(0,0,0,0.06);background:transparent;color:var(--text);margin:8px 0}
+button{display:inline-block;padding:12px 18px;border-radius:12px;border:none;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#fff;cursor:pointer;font-weight:800}
+button:hover{filter:brightness(.98);transform:translateY(-2px)}
+
+.success{color:lightgreen}
+.danger{color:var(--danger)}
+
+.notification{position:fixed;right:20px;bottom:20px;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#fff;padding:12px;border-radius:10px;box-shadow:0 12px 30px rgba(16,24,40,0.15)}
+
+/* topbar */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;background:transparent}
+
+.balance-card{padding:18px;border-radius:14px}
+.balance-card .card-inner{background:linear-gradient(90deg, rgba(0,102,255,0.06), rgba(255,212,64,0.03));padding:18px;border-radius:12px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.balance-card h3{margin:0;color:var(--muted);font-weight:600}
+.balance-card h1{font-size:2.4rem;margin:6px 0;color:var(--text);font-weight:800}
+
+.actions{display:flex;gap:12px;flex-wrap:wrap}
+
+/* Action cards styled to look like modern wallet tiles (white surface, orange accents) */
+.actions .card{flex:1;min-width:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;border-radius:12px;text-align:center;background:var(--card);color:var(--text);font-weight:700;text-decoration:none;transition:transform .18s ease,box-shadow .18s ease}
+.actions .card .card-emoji{font-size:1.6rem;display:block;margin-bottom:8px}
+.actions .card .card-label{font-weight:800;color:var(--text)}
+.actions .card:hover{transform:translateY(-8px);box-shadow:0 18px 46px rgba(16,24,40,0.08);background:linear-gradient(180deg,#fff,#fff)}
+.actions .card:hover .card-label{color:var(--accent)}
+.actions .card:active{transform:translateY(-2px) scale(0.995)}
+
+/* Entrance animation for each action card with a small stagger */
+.actions .card{animation:fadeUp .38s cubic-bezier(.2,.8,.2,1) both}
+.actions .card:nth-child(1){animation-delay:0s}
+.actions .card:nth-child(2){animation-delay:0.05s}
+.actions .card:nth-child(3){animation-delay:0.10s}
+.actions .card:nth-child(4){animation-delay:0.15s}
+.actions .card:nth-child(5){animation-delay:0.20s}
+.actions .card:nth-child(6){animation-delay:0.25s}
+.actions .card:nth-child(7){animation-delay:0.30s}
+
+.activity{background:rgba(255,255,255,0.02);padding:12px;border-radius:10px}
+
+.bottom-nav{position:fixed;left:12px;right:12px;bottom:12px;display:flex;justify-content:space-around;padding:10px;border-radius:999px;background:linear-gradient(90deg,#fff,#fff);box-shadow:0 18px 38px rgba(16,24,40,0.08);align-items:center}
+.bottom-nav{position:fixed;left:12px;right:12px;bottom:12px;display:flex;align-items:center;padding:8px;border-radius:999px;background:linear-gradient(90deg,#fff,#fff);box-shadow:0 18px 38px rgba(16,24,40,0.08)}
+.bottom-nav .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 6px;color:var(--muted);text-decoration:none;font-size:0.95rem;border-radius:10px;position:relative;z-index:2}
+.bottom-nav .nav-icon{display:block;font-size:1.3rem;line-height:1}
+.bottom-nav .nav-label{font-size:0.68rem;margin-top:4px;opacity:0.85}
+.bottom-nav .nav-item.active{color:var(--accent);}
+.bottom-nav .nav-item:focus{outline:none}
+
+/* sliding rounded indicator behind the active item */
+.bottom-nav .nav-indicator{position:absolute;height:44px;border-radius:12px;left:0;bottom:6px;background:linear-gradient(90deg,var(--accent),var(--accent-2));box-shadow:0 10px 30px rgba(0,102,255,0.12);transform:translateX(0);transition:transform .32s cubic-bezier(.2,.9,.2,1),width .28s ease}
+.bottom-nav{position:fixed}
+
+/* icon scaling on active */
+.bottom-nav .nav-item.active .nav-icon{transform:translateY(-2px) scale(1.16);transition:transform .26s cubic-bezier(.2,.9,.2,1)}
+
+/* small ripple on click */
+.bottom-nav .nav-item .ripple{position:absolute;left:50%;top:50%;width:12px;height:12px;background:rgba(0,102,255,0.12);border-radius:50%;transform:translate(-50%,-50%) scale(0);animation:ripple 600ms ease-out;pointer-events:none}
+@keyframes ripple{to{transform:translate(-50%,-50%) scale(6);opacity:0}}
+
+@media (max-width:520px){
+  .bottom-nav .nav-label{display:none}
+  .bottom-nav .nav-icon{font-size:1.25rem}
+  .bottom-nav .nav-indicator{height:44px}
+}
+
+/* small utilities */
+.spinner{width:36px;height:36px;border:4px solid rgba(16,24,40,0.06);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Login specific styles */
+.login-card{max-width:760px;margin:40px auto;padding:22px;display:flex;align-items:center}
+.brand-mark{width:64px;height:64px;border-radius:14px;background:linear-gradient(135deg,var(--accent),#1a63e6);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:1.4rem;box-shadow:0 12px 34px rgba(0,102,255,0.12)}
+.login-illustration{font-size:40px;width:84px;height:84px;border-radius:12px;background:linear-gradient(180deg,rgba(0,102,255,0.06),rgba(255,212,64,0.04));display:flex;align-items:center;justify-content:center;border:1px solid rgba(0,0,0,0.03)}
+
+/* Loader overlay for login */
+#loginLoader{background:linear-gradient(180deg,rgba(2,6,23,0.6),rgba(2,6,23,0.6));}
+.confirm-card{background:linear-gradient(180deg,#fff,#fff);}
+
+/* Make primary login button slightly larger and more prominent */
+button.primary{padding:12px 18px;border-radius:12px;background:linear-gradient(90deg,var(--accent),#1a63e6);color:#fff;border:none;font-weight:800;box-shadow:0 12px 34px rgba(0,102,255,0.12)}
+.login-card input{padding:12px;border-radius:10px;border:1px solid rgba(4,34,58,0.06);margin-top:6px}
+
+/* small animation for loader message */
+#loginLoaderMsg{animation:fadeUp .28s cubic-bezier(.2,.8,.2,1) both}
+
+/* responsive */
+@media (max-width:600px){
+  .actions{flex-direction:column}
+  main,section{margin:12px}
+}
+
+/* Avatar */
+.avatar{width:42px;height:42px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,0.06);box-shadow:0 6px 18px rgba(16,24,40,0.06)}
+.avatar{width:clamp(36px,6vw,64px);height:clamp(36px,6vw,64px)}
+
+/* Balance & account number */
+.account-number{font-size:0.9rem;color:var(--muted);margin-top:8px;text-align:center}
+.balance-toggle{background:transparent;border:1px solid rgba(0,0,0,0.06);padding:8px 12px;border-radius:10px;color:var(--muted);cursor:pointer}
+.balance-toggle:hover{background:rgba(0,0,0,0.02)}
+
+/* Avatar loading ring */
+.avatar.loading{animation: pulse 1.6s ease-in-out infinite}
+.avatar.loading{box-shadow:0 0 0 6px rgba(0,102,255,0.12)}
+
+/* biller/logo sizing (responsive) */
+.biller-row{display:flex;gap:8px;align-items:center;width:100%}
+.biller-logo{width:clamp(36px,6vw,48px);height:clamp(20px,4.2vw,28px);flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.biller-logo img{width:100%;height:100%;object-fit:contain}
+
+/* processing spinner used in confirm modal */
+.processing-spinner{width:clamp(44px,8vw,64px);height:clamp(44px,8vw,64px);border-radius:50%;border:6px solid rgba(0,0,0,0.08);border-top-color:var(--accent);animation:spin 1s linear infinite}
+
+/* helper to center tx-cards without inline styles */
+.tx-card.centered{justify-content:center}
+
+/* small inputs (used in settings) */
+.small-input{width:clamp(56px,8vw,96px);padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.06)}
+
+/* allow centering avatars via a helper class */
+.avatar.center{display:block;margin-left:auto;margin-right:auto;margin-bottom:10px}
+
+/* Animations */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes floaty {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(0,201,167,0.45); }
+  70% { box-shadow: 0 0 0 12px rgba(0,201,167,0); }
+  100% { box-shadow: 0 0 0 0 rgba(0,201,167,0); }
+}
+
+/* Apply entrance animation to main sections */
+main > section, header, .bottom-nav, .topbar {
+  animation: fadeUp 420ms cubic-bezier(.2,.8,.2,1) both;
+}
+
+/* Staggered children for subtle effect */
+main > section:nth-child(1){animation-delay:0s}
+main > section:nth-child(2){animation-delay:0.06s}
+main > section:nth-child(3){animation-delay:0.12s}
+
+/* Floating micro animation for prominent cards */
+.balance-card{animation: floaty 4s ease-in-out infinite;}
+
+/* Avatar pulse on hover/focus to draw attention */
+.avatar{transition:transform .25s ease, box-shadow .25s ease}
+.avatar:focus, .avatar:hover{transform:scale(1.06);animation: none}
+
+/* Gentle pulsing for notification badges or new update states */
+.has-update .avatar{animation: pulse 1.8s ease-in-out infinite}
+
+/* Respect user preference for reduced motion */
+@media (prefers-reduced-motion: reduce){
+  *{animation:none !important; transition:none !important}
+}
+
+/* Chat widget styles */
+.chat-launch{position:fixed;right:18px;bottom:84px;background:var(--accent);color:#001;border:none;padding:10px 14px;border-radius:28px;box-shadow:0 8px 24px rgba(0,0,0,0.35);cursor:pointer;font-weight:700}
+.chat-widget{position:fixed;right:18px;bottom:18px;width:320px;max-width:92vw;height:420px;background:var(--card);border-radius:12px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.5);transform:translateY(10px);opacity:0;pointer-events:none}
+.chat-widget[aria-hidden="false"]{transform:translateY(0);opacity:1;pointer-events:auto;animation:fadeUp .28s cubic-bezier(.2,.8,.2,1) both}
+.chat-header{padding:10px 12px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);display:flex;align-items:center;gap:8px}
+.chat-messages{flex:1;padding:12px;overflow:auto;background:linear-gradient(180deg,rgba(255,255,255,0.01),transparent)}
+.chat-input{display:flex;padding:8px;border-top:1px solid rgba(255,255,255,0.03)}
+.chat-input input{flex:1;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text)}
+.chat-input button{margin-left:8px;padding:10px 12px;border-radius:8px;border:none;background:var(--accent);color:#001;font-weight:700}
+.chat-messages .msg{margin-bottom:10px;display:flex}
+.chat-messages .msg .bubble{max-width:78%;padding:8px 10px;border-radius:10px}
+.chat-messages .msg.user{justify-content:flex-end}
+.chat-messages .msg.user .bubble{background:linear-gradient(180deg,var(--accent),var(--accent-2));color:#fff;border-bottom-right-radius:4px}
+.chat-messages .msg.bot{justify-content:flex-start}
+.chat-messages .msg.bot .bubble{background:rgba(255,255,255,0.03);color:var(--text);border-bottom-left-radius:4px}
+.chat-messages .ts{font-size:0.72rem;color:rgba(255,255,255,0.5);margin-top:4px}
+
+@media (max-width:600px){
+  .chat-widget{right:10px;left:10px;width:auto;height:60vh}
+  .chat-launch{right:12px;bottom:92px}
+}
+
+/* Support form visual polish */
+.support-form{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:14px;border-radius:12px;box-shadow:0 8px 30px rgba(2,41,52,0.35);transition:transform .18s ease,box-shadow .18s ease}
+.support-form input,.support-form select,.support-form textarea{background:transparent;border:1px solid rgba(255,255,255,0.04);padding:10px;border-radius:8px;margin-top:6px}
+.support-form label{display:block;margin-top:10px;font-weight:600;color:var(--text)}
+.support-form input:focus,.support-form select:focus,.support-form textarea:focus{outline:none;border-color:var(--accent-2);box-shadow:0 8px 20px rgba(0,102,255,0.06);transform:translateY(-1px)}
+.support-form button{font-weight:800}
+.support-form:hover{transform:translateY(-4px)}
+
+/* Tickets list styling */
+#supportList{margin-top:8px}
+#supportList .ticket{padding:12px;border-radius:10px;margin-bottom:10px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);border:1px solid rgba(255,255,255,0.02);transition:transform .16s ease,box-shadow .16s ease}
+#supportList .ticket:hover{transform:translateY(-6px);box-shadow:0 14px 36px rgba(2,41,52,0.45);background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01))}
+#supportList .ticket .t-title{font-weight:800;margin-bottom:6px}
+#supportList .ticket .t-meta{font-size:0.82rem;color:var(--muted);margin-bottom:8px}
+#supportList .ticket .t-body{font-size:0.95rem;color:var(--text)}
+
+/* Chat launcher pulse and hover */
+.chat-launch{animation:chatPulse 2.8s infinite ease-in-out;will-change:transform}
+.chat-launch:hover{transform:translateY(-6px) scale(1.03);box-shadow:0 18px 50px rgba(0,102,255,0.12)}
+@keyframes chatPulse{0%{box-shadow:0 0 0 0 rgba(0,102,255,0.16)}50%{box-shadow:0 0 0 18px rgba(0,102,255,0)}100%{box-shadow:0 0 0 0 rgba(0,102,255,0.0)}}
+
+/* Chat header enhancements */
+.chat-header strong{font-weight:800}
+.chat-header{background:linear-gradient(90deg,rgba(0,102,255,0.08),rgba(0,102,255,0.02))}
+.chat-messages .bubble{animation:fadeUp .22s cubic-bezier(.2,.8,.2,1) both}
+
+/* subtle entrance for the page sections to feel alive */
+main > section{will-change:transform,opacity}
+
+/* Recent activity list styles */
+.activity-list{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+.tx-card{display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;background:linear-gradient(180deg,rgba(0,0,0,0.02),rgba(0,0,0,0.01));box-shadow:0 8px 20px rgba(2,6,23,0.04);cursor:pointer;transition:transform .22s ease,box-shadow .22s ease, background .18s ease}
+.tx-card:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(2,6,23,0.08);background:linear-gradient(180deg,rgba(0,102,255,0.03),rgba(0,0,0,0.02))}
+.tx-icon{width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;background:linear-gradient(180deg,rgba(0,102,255,0.12),rgba(255,212,64,0.03));color:var(--accent);flex-shrink:0}
+.tx-icon{width:clamp(40px,6vw,56px);height:clamp(40px,6vw,56px);font-size:clamp(1rem,2.4vw,1.4rem)}
+.tx-content{flex:1;display:flex;flex-direction:column}
+.tx-title{font-weight:800;color:var(--text);margin-bottom:4px}
+.tx-sub{font-size:0.86rem;color:var(--muted)}
+.tx-amount{font-weight:800;color:var(--text);margin-left:12px;white-space:nowrap}
+
+/* debit/credit color hints */
+.tx-amount.credit{color:#0a8a36}
+.tx-amount.debit{color:#c12b2b}
+
+/* product/network tiles */
+.networks{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
+.network-tile{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:10px;border:1px solid rgba(4,34,58,0.06);background:white;cursor:pointer;transition:transform .18s ease,box-shadow .18s ease}
+.network-tile:hover{transform:translateY(-6px);box-shadow:0 12px 28px rgba(2,6,23,0.06)}
+.network-icon{font-size:1.1rem;display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:999px;color:white;font-weight:800}
+.network-label{font-weight:700}
+
+/* network color variants (approx brand tones) */
+.network-tile[data-network="mtn"] .network-icon{background:linear-gradient(180deg,#ffd400,#ffb400);color:#04233a}
+.network-tile[data-network="glo"] .network-icon{background:linear-gradient(180deg,#00c853,#009624)}
+.network-tile[data-network="airtel"] .network-icon{background:linear-gradient(180deg,#0077ff,#0056d6)}
+.network-tile[data-network="9mobile"] .network-icon{background:linear-gradient(180deg,#8e44ad,#6f2d9f)}
+
+.network-icon img{width:100%;height:100%;border-radius:999px;display:block}
+
+/* modal: confirmation before purchase */
+.confirm-modal, .receipt-modal { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(3,10,25,0.45); z-index:10000; }
+.confirm-card, .receipt-card { width:calc(100% - 40px); max-width:520px; background:var(--surface, #fff); border-radius:12px; box-shadow:0 20px 60px rgba(2,6,23,0.3); overflow:hidden }
+.confirm-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid rgba(0,0,0,0.04)}
+.confirm-body{padding:12px 16px}
+.confirm-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed rgba(0,0,0,0.04)}
+.confirm-actions{display:flex;gap:8px;padding:12px;border-top:1px solid rgba(0,0,0,0.04);justify-content:flex-end}
+.btn-ghost{background:transparent;border:1px solid rgba(0,0,0,0.06);padding:8px 12px;border-radius:8px;cursor:pointer}
+.warning-text{color:#b45a00;background:rgba(255,229,204,0.6);padding:8px;border-radius:8px;margin-top:8px}
+
+/* selected state for tiles */
+.network-tile.selected, .plan-tile.selected, .biller-tile.selected { box-shadow:0 14px 36px rgba(0,102,255,0.06); transform:translateY(-6px); border:1px solid rgba(0,102,255,0.12); }
+
+.plans{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
+.plan-tile{padding:10px 12px;border-radius:12px;border:1px solid rgba(4,34,58,0.04);background:linear-gradient(180deg,rgba(0,102,255,0.02),rgba(255,212,64,0.01));cursor:pointer;transition:transform .18s ease,box-shadow .18s ease}
+.plan-tile:hover{transform:translateY(-6px);box-shadow:0 10px 24px rgba(2,6,23,0.06)}
+.plan-amount{font-weight:800}
+.plan-sub{font-size:0.85rem;color:var(--muted)}
+
+.biller-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:10px 0}
+.biller-tile{padding:18px;border-radius:12px;border:0;cursor:pointer;display:flex;flex-direction:column;align-items:flex-start;gap:8px;transition:transform .22s cubic-bezier(.2,.9,.2,1),box-shadow .22s ease,background-position .6s ease;text-decoration:none;background:linear-gradient(135deg,var(--accent),#0047d6);color:#ffffff;background-size:200% 200%;box-shadow:0 12px 30px rgba(0,102,255,0.12)}
+.biller-tile:hover{transform:translateY(-8px);box-shadow:0 20px 50px rgba(0,102,255,0.16);background-position:100% 0}
+.biller-tile:focus{outline:3px solid rgba(255,255,255,0.12);outline-offset:4px}
+.biller-tile strong{display:block;font-size:1.02rem}
+.biller-tile .biller-sub{color:rgba(255,255,255,0.9);font-weight:500;font-size:0.92rem}
+
+/* Card buttons inside card-surface (e.g., Home Shortcut) - make them accent and white */
+.card-surface .card{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#001;border:none;padding:10px 14px;border-radius:10px;text-decoration:none;box-shadow:0 12px 34px rgba(0,102,255,0.12);transition:transform .22s cubic-bezier(.2,.9,.2,1),box-shadow .22s ease}
+.card-surface .card:hover{transform:translateY(-6px);box-shadow:0 22px 56px rgba(0,102,255,0.16)}
+.card-surface .card:focus{outline:3px solid rgba(0,102,255,0.12);outline-offset:3px}
+
+/* Settings page: nicer buttons and micro-interactions */
+.card-surface{position:relative}
+.card-surface button{padding:10px 14px;border-radius:10px;border:0;font-weight:800;background:linear-gradient(90deg,var(--accent),#1a63e6);color:#fff;cursor:pointer;box-shadow:0 12px 30px rgba(2,41,82,0.08);transition:transform .18s ease,box-shadow .18s ease,filter .18s ease}
+.card-surface button:hover{transform:translateY(-6px);box-shadow:0 22px 54px rgba(2,41,82,0.12);filter:brightness(1.03)}
+.card-surface button:active{transform:translateY(-2px) scale(.995)}
+.card-surface button:focus{outline:3px solid rgba(0,102,255,0.12);outline-offset:3px}
+
+/* subtle shimmer effect on hover (pseudo-element) */
+.card-surface button{position:relative;overflow:hidden}
+.card-surface button::after{content:"";position:absolute;left:-60%;top:0;width:60%;height:100%;background:linear-gradient(90deg,rgba(255,255,255,0.14),rgba(255,255,255,0.02));transform:skewX(-20deg) translateX(0);transition:transform .6s cubic-bezier(.2,.9,.2,1);pointer-events:none}
+.card-surface button:hover::after{transform:skewX(-20deg) translateX(220%)}
+
+/* secondary / transparent buttons inside settings */
+.card-surface button[style*="background:transparent"], .card-surface button.secondary{background:transparent;color:var(--text);border:1px solid rgba(0,0,0,0.06);box-shadow:none}
+.card-surface button[style*="background:transparent"]:hover{background:rgba(0,0,0,0.02);box-shadow:0 10px 26px rgba(2,6,23,0.04)}
+
+/* danger button style (clear data) */
+#btnClearData{background:transparent;color:var(--danger);border:1px solid rgba(193,43,43,0.08);font-weight:800}
+#btnClearData:hover{background:rgba(193,43,43,0.04);box-shadow:0 10px 26px rgba(193,43,43,0.04)}
+
+/* small entrance pop for card surfaces to feel lively */
+.card-surface{animation:popIn .32s cubic-bezier(.2,.9,.2,1) both}
+@keyframes popIn{from{transform:translateY(6px) scale(.995);opacity:0}to{transform:translateY(0) scale(1);opacity:1}}
+
+/* Hero card for dashboard welcome */
+.hero-card{background:linear-gradient(180deg,#ffffff, #fbfdff);padding:20px;border-radius:14px;border:1px solid rgba(0,0,0,0.03);box-shadow:0 18px 50px rgba(2,41,82,0.06)}
+.hero-card h1{margin:0;font-weight:900;color:var(--text)}
+.hero-card .brand-mark{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#1a63e6);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:1.05rem;box-shadow:0 10px 30px rgba(0,102,255,0.08)}
+.hero-card p{margin:0}
+.hero-card .primary{padding:12px 18px}
+
+@media (max-width:680px){
+  .hero-card{padding:14px}
+  .hero-card svg{display:none}
+}
+
+/* subtle pulse for hero CTA when page loads */
+.hero-cta-pulse {
+  animation: heroPulse 1400ms ease-in-out 1;
+}
+@keyframes heroPulse {
+  0% { transform: translateY(0) scale(1); box-shadow: 0 12px 34px rgba(0,102,255,0.08); }
+  40% { transform: translateY(-4px) scale(1.02); box-shadow: 0 24px 60px rgba(0,102,255,0.12); }
+  100% { transform: translateY(0) scale(1); box-shadow: 0 12px 34px rgba(0,102,255,0.08); }
+}
+
+/* Send page: account lookup UI */
+.acct-ok{color:#0a8a36;font-weight:800}
+.acct-fail{color:#c12b2b;font-weight:800}
+.acct-warning{color:var(--muted)}
+.lookup-inline{display:flex;align-items:center;gap:8px}
+.spinner.small{width:20px;height:20px;border-width:3px}
+.primary[disabled]{opacity:0.6;cursor:not-allowed;transform:none}
+
+/* account avatar circle next to resolved name */
+#accountAvatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:0.95rem;flex-shrink:0;box-shadow:0 6px 18px rgba(2,6,23,0.08)}
+
+/* Toggle switch for privacy controls */
+.toggle{display:flex;align-items:center;gap:12px;padding:8px 6px;border-radius:10px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);transition:background .18s ease,box-shadow .18s ease}
+.toggle:hover{background:linear-gradient(180deg,rgba(255,255,255,0.025),rgba(0,0,0,0.01));box-shadow:0 8px 22px rgba(2,6,23,0.04)}
+.toggle input{position:absolute;opacity:0;width:0;height:0}
+.toggle .label-text{flex:1;font-weight:700;color:var(--text)}
+.toggle .toggle-track{position:relative;flex:0 0 56px;height:32px;border-radius:999px;background:#e6eefc;border:1px solid rgba(0,0,0,0.04);transition:background .24s ease,box-shadow .18s ease}
+.toggle .toggle-track::after{content:'';position:absolute;left:6px;top:50%;transform:translateY(-50%);width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 6px 18px rgba(2,6,23,0.08);transition:transform .22s cubic-bezier(.2,.9,.2,1),background .18s ease}
+.toggle input:checked + .toggle-track{background:linear-gradient(90deg,var(--accent),#1a63e6);box-shadow:0 8px 26px rgba(0,102,255,0.08)}
+.toggle input:checked + .toggle-track::after{transform:translateY(-50%) translateX(22px);background:#fff}
+.toggle input:focus + .toggle-track{outline:3px solid rgba(0,102,255,0.12);outline-offset:3px}
+
+/* small responsive adjustments */
+@media (max-width:520px){
+  .toggle .toggle-track{flex:0 0 48px;height:28px}
+  .toggle .toggle-track::after{width:20px;height:20px}
+}
+.biller-name{font-weight:800}
+.biller-sub{font-size:0.88rem;color:var(--muted)}
+
+/* form helpers */
+.form-row{display:flex;gap:8px;flex-wrap:wrap}
+input[type="text"], input[type="number"], select{padding:10px 12px;border-radius:10px;border:1px solid rgba(4,34,58,0.08);min-width:220px}
+button.primary{background:var(--accent);color:white;border:0;padding:10px 14px;border-radius:10px;cursor:pointer;font-weight:700}
+button.primary:active{transform:translateY(1px)}
+
+@media (max-width:520px){
+  .networks{justify-content:space-between}
+  .plan-tile{flex:1 1 48%}
+}
+
+/* small label link */
+.small-link{font-size:0.9rem;color:var(--muted);text-decoration:none}
+.small-link:hover{text-decoration:underline}
+
+/* Back to Dashboard floating button */
+.back-dashboard{position:fixed;left:18px;top:18px;z-index:99999;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#001;padding:10px 12px;border-radius:12px;box-shadow:0 12px 34px rgba(0,102,255,0.12);font-weight:800;border:none;cursor:pointer}
+.back-dashboard:hover{transform:translateY(-3px);filter:brightness(.98)}
+.back-dashboard:focus{outline:3px solid rgba(0,102,255,0.12);outline-offset:4px}
+
+/* Inline variant placed inside header/topbar so it doesn't overlap page content */
+.back-dashboard.inline-back{position:relative;left:auto;top:auto;z-index:10;background:transparent;padding:8px 10px;border-radius:8px;box-shadow:none;border:1px solid rgba(0,0,0,0.06);color:var(--accent);font-weight:700;margin-right:8px}
+.back-dashboard.inline-back:hover{transform:none;filter:none}
+
+/* Smaller fixed variant to reduce visual obstruction */
+.back-dashboard{padding:8px 10px;font-size:0.95rem}
+
+/* Hide fixed button on very small screens to avoid covering content */
+@media (max-width:420px){
+  .back-dashboard{display:none}
+}
+
+/* entry animation for activity items */
+@keyframes slideFadeUp {
+  from { opacity: 0; transform: translateY(10px) translateX(-6px); }
+  to { opacity: 1; transform: translateY(0) translateX(0); }
+}
+.tx-card{animation:slideFadeUp .4s cubic-bezier(.2,.8,.2,1) both}
+
+/* status badges */
+.tx-badge{font-size:0.72rem;padding:6px 8px;border-radius:999px;background:rgba(0,0,0,0.04);color:var(--muted);margin-left:8px}
+
+/* transaction status pill */
+.tx-status{display:inline-block;margin-top:8px;padding:6px 8px;border-radius:999px;font-weight:700;font-size:0.78rem}
+.tx-status.pending{background:#fff4e6;color:#b45a00;border:1px solid rgba(180,90,0,0.06)}
+.tx-status.success{background:#ecfff1;color:#0a8a36;border:1px solid rgba(10,138,54,0.06)}
+.tx-status.failed{background:#fff0f0;color:#c12b2b;border:1px solid rgba(193,43,43,0.06)}
+.tx-status.completed{background:rgba(255,255,255,0.02);color:var(--muted);border:1px solid rgba(0,0,0,0.03)}
+
+/* small circular status indicator inside the left icon of tx-cards */
+.tx-icon{position:relative}
+.tx-icon .tx-indicator{position:absolute;left:-6px;top:-6px;width:12px;height:12px;border-radius:50%;border:2px solid #fff;box-shadow:0 4px 10px rgba(2,6,23,0.12)}
+.tx-icon .tx-indicator.pending{background:#ffd36b;border-color:#fff4e6}
+.tx-icon .tx-indicator.success{background:#19b456;border-color:#ecfff1}
+.tx-icon .tx-indicator.failed{background:#e04b4b;border-color:#fff0f0}
+.tx-icon .tx-indicator.completed{background:#9aa6bf;border-color:rgba(255,255,255,0.06)}
+
+@media (prefers-reduced-motion: reduce){
+  .tx-card{animation:none !important; transition:none !important}
+}
+
+/* history filters */
+.filters{display:flex;gap:8px;margin:12px 0 8px}
+.filter-btn{padding:8px 10px;border-radius:10px;border:1px solid rgba(11,37,69,0.06);background:transparent;color:var(--text);cursor:pointer;font-weight:600}
+.filter-btn.active{background:linear-gradient(90deg,var(--accent) 0%,var(--accent-2) 100%);color:#04233a;border:0}
+.filter-btn:focus{outline:2px solid rgba(0,102,255,0.12)}
+
+/* small count inside filter button */
+.filter-count{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;background:rgba(4,34,58,0.06);font-weight:700;font-size:0.85rem}
+
+/* Esusu group member list styles */
+.member-item{display:flex;align-items:center;justify-content:space-between;padding:12px;border-radius:10px;border:1px solid rgba(0,0,0,0.04);margin-bottom:8px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent)}
+.member-meta{display:flex;gap:12px;align-items:center}
+.member-avatar{width:44px;height:44px;border-radius:10px;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#001;display:flex;align-items:center;justify-content:center;font-weight:800}
+.member-actions{display:flex;gap:12px;align-items:center}
+.member-amount{font-weight:800;padding:6px 10px;border-radius:8px}
+.member-amount.status-paid{background:rgba(0,255,128,0.06);color:#0a8a36;border:1px solid rgba(10,138,54,0.06)}
+.member-amount.status-pending{background:rgba(255,244,230,0.06);color:#b45a00;border:1px solid rgba(180,90,0,0.06)}
+.badge{display:inline-block;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#001;padding:6px 8px;border-radius:999px;font-weight:800;font-size:0.78rem}
+.mark-paid{background:transparent;border:1px solid rgba(0,0,0,0.06);padding:8px 10px;border-radius:8px;cursor:pointer}
+.mark-paid:hover{transform:translateY(-3px);box-shadow:0 10px 26px rgba(2,6,23,0.04)}
+
+/* payout history styles */
+.payout-history{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.payout-item{padding:10px;border-radius:8px;background:linear-gradient(180deg,rgba(0,0,0,0.02),transparent);border:1px solid rgba(0,0,0,0.04)}
+.payout-item .small-link{color:var(--muted);font-size:12px}
+
+/* trust badge */
+.trust-badge{background:linear-gradient(90deg,#1a9a43,#0b7bd6);color:#fff;padding:4px 8px;border-radius:6px;font-size:12px;font-weight:600}
+
+/* pending payout */
+.payout-item.pending{border:1px dashed rgba(0,0,0,0.06);background:linear-gradient(180deg,rgba(255,245,235,0.6),transparent)}
+.payout-item.pending .small-link{color:#b45b00}
+
+/* escrow display */
+#groupEscrow{font-weight:600;margin-top:8px;color:var(--muted)}
+
+
+/* Esusu / Groups styles */
+.groups-hero{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px;border-radius:12px;background:linear-gradient(90deg,rgba(0,102,255,0.06),rgba(255,212,64,0.03));margin-bottom:12px}
+.groups-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.group-card{padding:14px;border-radius:12px;background:var(--card);box-shadow:0 12px 34px rgba(2,6,23,0.04);border:1px solid rgba(0,0,0,0.03);display:flex;flex-direction:column;gap:10px}
+.group-meta{display:flex;align-items:center;gap:10px}
+.group-avatar{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#001;font-weight:900}
+.group-actions{display:flex;gap:8px}
+.group-actions button{padding:8px 10px;border-radius:10px;border:0;font-weight:800}
+.group-foot{display:flex;justify-content:space-between;align-items:center;font-size:0.9rem;color:var(--muted)}
+.group-list-empty{padding:18px;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);text-align:center;color:var(--muted)}
+
+.group-detail{display:grid;grid-template-columns:1fr 320px;gap:16px}
+.group-detail .panel{padding:14px;border-radius:12px;background:var(--card);box-shadow:0 12px 30px rgba(2,6,23,0.04)}
+.contrib-list{display:flex;flex-direction:column;gap:8px;max-height:360px;overflow:auto}
+.contrib-item{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;background:linear-gradient(180deg,rgba(0,0,0,0.02),transparent)}
+
+@media (max-width:920px){
+  .group-detail{grid-template-columns:1fr}
+  .groups-hero{flex-direction:column;align-items:flex-start}
+}
+
+
+/* Profile page specific styles */
+.profile-root{padding-bottom:88px}
+.profile-hero{display:block;margin-bottom:16px;background:linear-gradient(90deg,rgba(0,102,255,0.06),rgba(255,212,64,0.03));padding:18px}
+.profile-hero .hero-inner{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.avatar-block{display:flex;align-items:center;gap:12px}
+.avatar-xxl{width:96px;height:96px;border-radius:20px;object-fit:cover;border:4px solid rgba(255,255,255,0.06);box-shadow:0 12px 34px rgba(2,6,23,0.08)}
+.avatar-meta h3{margin:0;font-size:1.2rem}
+.avatar-meta .account-number{margin:6px 0 0;color:var(--muted);font-size:0.95rem}
+.hero-stats{display:flex;gap:16px;margin-left:auto;align-items:center}
+.hero-stats .stat{min-width:110px;text-align:right}
+.hero-stats .stat-label{font-size:0.85rem;color:var(--muted)}
+.hero-stats .stat-value{font-weight:800;font-size:1.05rem}
+
+.profile-grid{display:grid;grid-template-columns:1fr 320px;gap:16px;margin-top:18px}
+.profile-form h3{margin-top:0;margin-bottom:8px}
+.profile-form .field{display:flex;flex-direction:column}
+.profile-form label{font-weight:700;margin-top:6px;color:var(--muted)}
+.avatar-upload{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.avatar-upload input[type=file]{flex:1}
+.avatar-actions{display:flex;gap:8px;margin-left:auto}
+.profile-actions{display:flex;gap:10px;justify-content:flex-start;margin-top:12px}
+.profile-actions .btn-ghost{background:transparent;border:1px solid rgba(0,0,0,0.06);padding:10px 12px;border-radius:10px}
+.info-card h4{margin:0 0 8px 0}
+.mini-row{display:flex;gap:12px;justify-content:space-between;align-items:center}
+.mini-row .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Courier New', monospace;font-weight:800}
+.muted{color:var(--muted)}
+
+.profile-side .activity-list{max-height:240px;overflow:auto;padding-right:6px}
+.profile-side .card-surface{margin-bottom:12px}
+
+@media (max-width:900px){
+  .profile-grid{grid-template-columns:1fr}
+  .hero-stats{width:100%;justify-content:space-between}
+  .avatar-xxl{width:84px;height:84px}
+}
+
+@media (max-width:520px){
+  .avatar-xxl{width:72px;height:72px;border-radius:14px}
+  .hero-stats{flex-direction:row;gap:8px}
+}
+
+/* form validation helpers */
+.field .error{display:none;color:var(--danger);font-size:0.85rem;margin-top:6px}
+.field.error input{border-color:var(--danger);box-shadow:0 8px 24px rgba(193,43,43,0.06)}
+.field.error .error{display:block}
+
+/* Choose image button style (ghost) */
+.btn-ghost{background:transparent;border:1px solid rgba(0,0,0,0.06);padding:8px 10px;border-radius:10px;color:var(--text);cursor:pointer}
+.btn-ghost:hover{background:rgba(0,0,0,0.02)}
+
+/* visually-hidden utility for screen readers */
+.visually-hidden{position:absolute !important;height:1px;width:1px;overflow:hidden;clip:rect(1px,1px,1px,1px);white-space:nowrap;border:0;padding:0;margin:-1px}
+
+/* Toast notifications */
+.toast-container{position:fixed;right:16px;bottom:24px;display:flex;flex-direction:column;gap:10px;z-index:15000;max-width:min(360px,calc(100% - 32px))}
+.toast{background:linear-gradient(90deg,#fff,#ffffff);border-radius:10px;padding:10px 12px;box-shadow:0 12px 36px rgba(2,6,23,0.16);opacity:0;transform:translateY(8px);transition:transform .26s cubic-bezier(.2,.9,.2,1),opacity .26s ease}
+.toast.visible{opacity:1;transform:translateY(0)}
+.toast.success{border-left:4px solid #06b6d4}
+.toast.info{border-left:4px solid #0066ff}
+.toast.danger{border-left:4px solid #ef4444}
+.toast .toast-body{font-weight:700;color:var(--text)}
+
+/* load more */
+.load-more{display:block;margin:12px auto;padding:10px 14px;border-radius:10px;border:0;background:var(--accent);color:white;cursor:pointer;font-weight:700}
+.load-more:active{transform:translateY(1px)}
+
+/* inline quick-preview */
+.tx-preview{margin-top:8px;padding:10px;border-radius:10px;background:rgba(6,20,40,0.02);border:1px solid rgba(0,0,0,0.03);font-size:0.95rem}
+.tx-preview .row{display:flex;justify-content:space-between;gap:12px;padding:6px 0}
+.tx-preview .row strong{color:var(--text)}
+
+.tx-card{display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;background:linear-gradient(180deg,rgba(0,0,0,0.02),rgba(0,0,0,0.01));box-shadow:0 8px 20px rgba(2,6,23,0.04);cursor:pointer;transition:transform .22s ease,box-shadow .22s ease, background .18s ease}
+
+/* Receipt modal styles */
+.receipt-modal{position:fixed;inset:0;background:rgba(11,37,69,0.45);display:flex;align-items:center;justify-content:center;padding:20px;z-index:9999;display:none}
+.receipt-modal .receipt-card{width:420px;max-width:96vw;background:var(--card);border-radius:12px;box-shadow:0 20px 60px rgba(2,6,23,0.2);overflow:hidden}
+.receipt-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid rgba(11,37,69,0.04)}
+.receipt-header button{background:transparent;border:1px solid rgba(11,37,69,0.06);padding:6px 10px;border-radius:8px;cursor:pointer}
+.receipt-body{padding:12px;color:var(--text)}
+.receipt-body .r{padding:8px 0;border-bottom:1px solid rgba(11,37,69,0.04)}
+
+/* Light/Dark mode support */
+body.dark-mode{--bg-1:#07132a;--glass:rgba(8,18,35,0.6);--card:#0c1726;--text:#e6f0ff;--muted:#9aa6bf}
+body.dark-mode{background:linear-gradient(180deg,var(--bg-1),#020617)}
+
+/* Enhanced hover/animation for action tiles and networks */
+.card{transition:transform .22s cubic-bezier(.2,.9,.2,1), box-shadow .22s ease, background .2s ease; border-radius:12px}
+.card:hover{transform:translateY(-8px) scale(1.02); box-shadow:0 20px 50px rgba(2,6,23,0.12); background:linear-gradient(90deg, rgba(0,102,255,0.06), rgba(255,212,64,0.03));}
+
+.network-tile{background:linear-gradient(180deg, rgba(255,255,255,0.98), rgba(245,250,255,0.98));}
+.network-tile .network-icon{box-shadow:0 8px 26px rgba(0,102,255,0.08);transform:translateZ(0);transition:transform .22s cubic-bezier(.2,.9,.2,1), box-shadow .22s ease}
+.network-tile:hover .network-icon{transform:scale(1.08) translateY(-2px);box-shadow:0 18px 46px rgba(0,102,255,0.12)}
+
+.tx-card{transition: transform .26s cubic-bezier(.2,.9,.2,1), box-shadow .26s ease, background .2s ease}
+
+/* Collapsible recent panel for mobile: smooth slide up/down */
+.recent-panel{overflow:hidden;max-height:1400px;transition:max-height .36s cubic-bezier(.2,.9,.2,1), opacity .26s ease, padding .26s ease}
+.recent-panel.collapsed{max-height:0;opacity:0;padding:0 !important}
+
+/* mobile-only helpers */
+.mobile-only{display:none}
+@media (max-width:980px){
+  .mobile-only{display:inline-block}
+  .dashboard-grid{grid-template-columns:1fr}
+}
+
+/* Compact mobile adjustments for narrow phones (iPhone) */
+@media (max-width:780px){
+  /* slightly smaller base font for compactness */
+  body{font-size:13px}
+
+  /* cards and surfaces */
+  .card-surface{padding:10px;border-radius:12px}
+  .balance-card .card-inner{padding:12px}
+
+  /* balance text smaller */
+  .balance-card h1{font-size:1.2rem}
+  .balance-card h3{font-size:0.8rem}
+
+  /* avatars & icons */
+.avatar{width:48px;height:48px}
+.avatar.center{width:64px;height:64px}
+
+/* All Interfaces link (topbar) */
+.interfaces-link{margin-left:8px;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;color:var(--muted);width:36px;height:36px;border-radius:8px}
+.interfaces-link svg{width:20px;height:20px;color:var(--accent);display:block}
+.interfaces-link:hover{background:rgba(0,102,255,0.06);color:var(--accent)}
+.interfaces-link:focus{outline:2px solid rgba(0,102,255,0.14);outline-offset:2px}
+
+/* ensure topbar icons align nicely on very small screens */
+@media (max-width:420px){
+  .interfaces-link{width:32px;height:32px}
+  .interfaces-link svg{width:18px;height:18px}
+}
+
+  /* action cards compact */
+  .actions .card{padding:10px;border-radius:10px;min-width:100px}
+  .actions .card .card-emoji{font-size:1.2rem}
+
+  /* networks / plans / billers: tighter grid and gaps */
+  .networks{gap:8px}
+  .network-tile, .plan-tile, .biller-tile{padding:8px;border-radius:10px}
+
+  /* transaction list compact */
+  .tx-card{padding:8px;border-radius:10px;gap:8px}
+  .tx-icon{width:42px;height:42px;font-size:1rem}
+  .tx-content .tx-title{font-size:0.95rem}
+  .tx-sub{font-size:0.78rem}
+  .tx-amount{font-size:0.95rem}
+
+  /* sparkline smaller */
+  #recentSparkline{height:44px !important}
+
+  /* history controls */
+  #historySearch{min-width:120px}
+  .filters{gap:6px}
+  .filter-btn{padding:6px 8px;font-size:0.85rem}
+
+  /* modal and confirm compact */
+  .confirm-card, .receipt-card{max-width:92vw}
+  .confirm-body{padding:10px}
+
+  /* reduce bottom nav size */
+  .bottom-nav{padding:6px;left:8px;right:8px;bottom:8px}
+
+  /* make toggle buttons slightly smaller */
+  #toggleRecent, #toggleNetworks, #toggleDataPanels, #toggleBillers{padding:6px 8px;font-size:0.92rem}
+}
+
+/* toggle button visuals */
+#toggleRecent{padding:8px 10px;border-radius:10px;border:1px solid rgba(0,0,0,0.06);background:transparent;cursor:pointer}
+#toggleRecent:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,0.06)}
+#toggleRecent .chev{display:inline-block;margin-left:8px;transition:transform .28s cubic-bezier(.2,.9,.2,1);transform-origin:center}
+#toggleRecent.collapsed .chev{transform:rotate(-90deg)}
+#toggleRecent .toggle-text{font-weight:700}
+
+/* subtle hover for plan & biller tiles to enhance interactivity */
+.plan-tile, .biller-tile{transition:transform .22s cubic-bezier(.2,.9,.2,1), box-shadow .22s ease, background .2s ease}
+.plan-tile:hover, .biller-tile:hover{transform:translateY(-8px) scale(1.02);box-shadow:0 18px 46px rgba(2,6,23,0.08);background:linear-gradient(180deg,rgba(0,102,255,0.03),rgba(255,212,64,0.02))}
+
+/* Dashboard grid helpers and HiDPI-friendly sparkline canvas */
+.dashboard-grid{display:grid;grid-template-columns:320px 1fr;gap:18px;align-items:start}
+@media (max-width:980px){.dashboard-grid{grid-template-columns:1fr;gap:12px}}
+
+.sparkline-canvas{width:100%;height:56px;display:block;border-radius:8px}
+.sparkline-canvas[role="img"]{display:block}
+
+/* small helpers for compact cards on mobile */
+.compact .balance-card h1{font-size:clamp(1.4rem, 3.2vw, 2.4rem)}
+.compact .tx-amount{font-size:0.98rem}
+
+/* ensure indicator stays visible on very small tx icons */
+.tx-icon .tx-indicator{left:-4px;top:-4px;width:10px;height:10px}

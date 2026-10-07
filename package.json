@@ -1,0 +1,21 @@
+{
+  "name": "fastbank-pos-scam-detector",
+  "version": "0.1.0",
+  "private": true,
+  "devDependencies": {
+    "@playwright/test": "^1.37.0",
+    "playwright": "^1.40.0",
+    "speakeasy": "^2.0.0"
+  },
+  "scripts": {
+    "test:profile": "node tests/test_profile.js",
+    "test:playwright": "npx playwright test --project=chromium",
+    "start:static": "npx http-server -p 3000",
+    "test:markpaid": "npx playwright test tests/mark-paid.spec.js",
+    "test:e2e": "npx playwright test",
+    "mock:start": "node mock-server/server.js",
+  "mock:test": "node mock-server/server.js & npx playwright test",
+  "mock:ci": "node scripts/run-mock-and-test.js",
+    "ci:test": "npx start-server-and-test start:static http://localhost:3000 test:markpaid"
+  }
+}

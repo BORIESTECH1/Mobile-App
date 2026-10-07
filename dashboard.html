@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Fast & Reliable Bank Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="auth.js" defer></script>
+    <script src="script.js" defer></script>
+</head>
+<body>
+        <header class="topbar">
+            <h2>🏦 Fast &amp; Reliable Bank</h2>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <img id="userAvatar" class="avatar" alt="Profile" style="display:none" src="">
+                <span id="userDisplay"></span>
+                <a class="interfaces-link" href="interfaces.html" title="All Interfaces" aria-label="All Interfaces" style="margin-left:8px;text-decoration:none;display:inline-flex;align-items:center">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                        <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                        <path d="M12 7l3 2-2 3-3-2 2-3z" fill="currentColor"/>
+                    </svg>
+                </a>
+            </div>
+            <button id="btnLogout">Logout</button>
+        </header>
+
+    <main class="center">
+        <section>
+            <div class="card-surface hero-card" style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+                <div style="flex:1;min-width:220px">
+                    <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+                        <div class="brand-mark" aria-hidden="true" style="width:56px;height:56px">FB</div>
+                        <div style="flex:1;min-width:0">
+                            <h1 style="margin:0;font-size:1.3rem;line-height:1.05">Welcome to Fast &amp; Reliable Bank</h1>
+                            <div style="display:flex;align-items:center;gap:10px;margin-top:6px">
+                                <img id="heroUserAvatar" src="" alt="" style="width:36px;height:36px;border-radius:8px;display:none;object-fit:cover;border:2px solid rgba(255,255,255,0.06)" />
+                                <div style="display:flex;flex-direction:column">
+                                    <div id="heroUserName" style="font-weight:700;color:var(--muted);font-size:0.95rem">You are logged in successfully.</div>
+                                    <div id="heroUserSub" style="color:var(--muted);font-size:0.85rem;">Access your dashboard, manage funds, and use our secure group savings features.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <p style="margin-top:10px;color:var(--muted);max-width:560px">Access your dashboard, manage funds, and use our secure group savings features. Enjoy fast transactions and built-in escrow protection for safer payouts.</p>
+                    <div style="display:flex;gap:12px;margin-top:14px;align-items:center">
+                        <a id="btnGoMain" class="primary" href="index.html" style="text-decoration:none;display:inline-flex;align-items:center;gap:10px;padding:12px 16px;border-radius:12px">Go to Main App ▸</a>
+                        <a id="btnExplore" class="card" href="groups.html" style="padding:10px 14px;text-decoration:none">Explore Groups</a>
+                    </div>
+                </div>
+                <div style="width:220px;display:flex;align-items:center;justify-content:center">
+                    <img src="assets/hero-illustration.svg" alt="Dashboard illustration" style="max-width:160px;width:100%;height:auto;display:block" />
+                </div>
+            </div>
+        </section>
+
+    <section class="dashboard-grid" style="max-width:1100px;margin:18px auto;align-items:start">
+            <!-- Left column: profile, balance, quick actions -->
+            <div class="card-surface">
+                <div style="display:flex;flex-direction:column;gap:12px;align-items:center">
+                    <img id="dashAvatar" class="avatar" src="" alt="Avatar" style="display:block">
+                    <div id="dashName" style="font-weight:800;font-size:1.05rem">Guest</div>
+                    <div class="account-number" id="dashAccount">Acct: ************</div>
+                    <div class="balance-card" style="width:100%">
+                        <div class="card-inner" style="flex-direction:column;align-items:center">
+                            <div style="display:flex;align-items:center;gap:10px;width:100%;justify-content:center">
+                                <div style="text-align:center">
+                                    <div style="font-size:0.85rem;color:var(--muted)">Available Balance</div>
+                                    <div id="dashBalance" style="font-weight:900;font-size:1.6rem">₦0.00</div>
+                                </div>
+                            </div>
+                            <div style="margin-top:6px;display:flex;gap:8px;width:100%;justify-content:center">
+                                <button id="btnToggleBalance" class="balance-toggle">Hide</button>
+                                <a class="card" href="send.html" style="padding:8px 10px;min-width:80px;text-decoration:none;display:inline-flex;align-items:center;justify-content:center">Send</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="width:100%;margin-top:8px;padding:6px;border-radius:8px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);">
+                        <div style="font-weight:800;margin-bottom:6px">Balance breakdown</div>
+                        <div style="display:flex;justify-content:space-between;gap:8px">
+                            <div style="color:var(--muted)">Credits</div><div id="dashCredits">₦0</div>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;gap:8px">
+                            <div style="color:var(--muted)">Debits</div><div id="dashDebits">₦0</div>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;gap:8px;margin-top:8px;border-top:1px dashed rgba(0,0,0,0.04);padding-top:8px">
+                            <div style="font-weight:800">Net</div><div id="dashNet">₦0</div>
+                        </div>
+                    </div>
+                    <div style="width:100%">
+                        <div style="display:flex;gap:8px;flex-direction:column">
+                            <a href="airtime.html" class="card">Buy Airtime</a>
+                            <a href="data.html" class="card">Buy Data</a>
+                            <a href="bills.html" class="card">Pay Bills</a>
+                            <a href="loan.html" class="card">Apply Loan</a>
+                            <a href="interfaces.html" class="card">All Interfaces</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right column: recent activity + history with search/export -->
+            <div>
+                <div class="card-surface" style="margin-bottom:12px">
+                    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px">
+                        <h3 style="margin:0">Recent Activity</h3>
+                        <div>
+                            <button id="toggleRecent" class="btn-ghost mobile-only" title="Hide recent activity"><span class="toggle-text">Hide</span><span class="chev" aria-hidden="true">▾</span></button>
+                        </div>
+                    </div>
+                    <div id="recentPanel" class="recent-panel">
+                        <canvas id="recentSparkline" width="360" height="64" style="width:100%;height:64px;border-radius:8px;background:linear-gradient(90deg,rgba(0,102,255,0.02),transparent);display:block;margin-bottom:8px"></canvas>
+                        <div id="activityList" class="activity-list">Loading…</div>
+                    </div>
+                </div>
+
+                <div class="card-surface">
+                    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px">
+                        <h3 style="margin:0">Transaction History</h3>
+                        <div style="display:flex;gap:8px;align-items:center">
+                            <input id="historySearch" placeholder="Search transactions (ref, biller, phone)" style="padding:8px;border-radius:10px;border:1px solid rgba(0,0,0,0.06);min-width:220px">
+                            <button id="exportCsv" class="btn-ghost">Export CSV</button>
+                            <button id="openDashboardSettings" class="btn-ghost" title="Dashboard settings">⚙️</button>
+                        </div>
+                    </div>
+                    <div class="filters" role="tablist" aria-label="Transaction filters">
+                        <button class="filter-btn active" data-filter="all">All <span class="filter-count" id="count_all">0</span></button>
+                        <button class="filter-btn" data-filter="debits">Debits <span class="filter-count" id="count_debits">0</span></button>
+                        <button class="filter-btn" data-filter="credits">Credits <span class="filter-count" id="count_credits">0</span></button>
+                        <button class="filter-btn" data-filter="loans">Loans <span class="filter-count" id="count_loans">0</span></button>
+                    </div>
+                    <div id="historyList" class="activity-list">Loading history…</div>
+                    <button id="loadMoreHistory" class="load-more">Load more</button>
+                </div>
+            </div>
+
+            <!-- Fraud review queue -->
+            <div class="card-surface" style="margin-top:12px">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px">
+                    <h3 style="margin:0">Review Queue</h3>
+                    <div><a href="#" id="refreshReviewQueue" class="small-link">Refresh</a></div>
+                </div>
+                <div id="fraudReviewQueue">
+                    <div class="small-link">No items flagged for review.</div>
+                </div>
+            </div>
+
+            <div class="card-surface" style="margin-bottom:12px">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px">
+                    <h3 style="margin:0">Esusu Groups</h3>
+                    <div><a href="groups.html" class="small-link">View all</a></div>
+                </div>
+                <div id="dashboardGroups" style="display:flex;flex-direction:column;gap:8px">
+                    <div class="small-link">Loading groups…</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // add a one-time CTA pulse for the hero button to draw attention
+            try{
+                const cta = document.getElementById('btnGoMain');
+                if (cta){
+                    // add pulse class after a short delay
+                    setTimeout(()=> {
+                        cta.classList.add('hero-cta-pulse');
+                        // remove class after animation to avoid reflow on focus
+                        setTimeout(()=> cta.classList.remove('hero-cta-pulse'), 1600);
+                    }, 700);
+                }
+            }catch(e){}
+                if (window.checkAuth) window.checkAuth();
+                if (window.loadUser) window.loadUser();
+                if (window.loadProfile) window.loadProfile();
+
+                // Personalize hero with logged in user's name and avatar when available
+                try {
+                    var logged = localStorage.getItem('loggedInUser');
+                    if (logged) {
+                        var username = JSON.parse(logged).username || logged;
+                        var profiles = JSON.parse(localStorage.getItem('bt_profiles') || '{}');
+                        var profile = profiles[username];
+                        if (profile) {
+                            var heroName = document.getElementById('heroUserName');
+                            var heroAvatar = document.getElementById('heroUserAvatar');
+                            if (heroName) heroName.textContent = 'Welcome back, ' + (profile.displayName || username) + '.';
+                            if (heroAvatar && profile.avatar) {
+                                heroAvatar.src = profile.avatar;
+                                heroAvatar.style.display = 'block';
+                                heroAvatar.alt = (profile.displayName || username) + "'s avatar";
+                            }
+                        }
+                    }
+                } catch (e) {
+                    console.warn('Could not personalize hero:', e);
+                }
+            // populate dashboard widgets from profile
+            if (window.populateDashboard) window.populateDashboard();
+            document.getElementById('btnLogout')?.addEventListener('click', () => window.logout && window.logout());
+            // render full history and wire filters + load more + search/export
+            try{
+                if (window.renderHistory) window.renderHistory('all');
+                if (window.renderRecentActivity) window.renderRecentActivity();
+                // render groups widget
+                try{
+                    const gcont = document.getElementById('dashboardGroups');
+                    if (gcont && window.esusu && window.esusu.listGroups){
+                        const groups = window.esusu.listGroups();
+                        gcont.innerHTML = '';
+                        if (!groups || !groups.length) {
+                            gcont.innerHTML = '<div class="group-list-empty">No groups yet. Create one in Groups.</div>';
+                        } else {
+                            groups.slice(0,3).forEach(g => {
+                                const el = document.createElement('div'); el.className='group-card';
+                                el.style.display = 'flex'; el.style.justifyContent='space-between'; el.style.alignItems='center';
+                                el.innerHTML = `<div><strong>${g.name}</strong><div class="small-link">₦${g.contributionAmount} • ${g.members.length} members</div></div><div style="display:flex;gap:8px"><button class="btn-ghost" onclick="location.href='group.html?id=${encodeURIComponent(g.id)}'">View</button><button onclick="joinDashboardGroup('${g.id}')">Join</button></div>`;
+                                gcont.appendChild(el);
+                            });
+                        }
+                    }
+                }catch(e){ console.error('groups widget failed', e); }
+                // helper to join from dashboard widget
+                window.joinDashboardGroup = function(groupId){
+                    if (window.openEsusuJoinModal) return window.openEsusuJoinModal(groupId);
+                    // fallback: use input modal if available
+                    (async function(){
+                            try{
+                                let user = localStorage.getItem('loggedInUser') || '';
+                                if (!user) {
+                                    // prompt for user id using the accessible input modal
+                                    const u = await window.openInputModal({ title: 'Join group', label: 'User id', placeholder: 'alice' });
+                                    if (!u) return; user = u;
+                                }
+                                window.esusu.joinGroup(groupId, user);
+                                // use centralized toast API if available
+                                window.showToast && window.showToast('Joined group','success');
+                                // refresh dashboard groups
+                                try{ const gcont = document.getElementById('dashboardGroups'); if (gcont && window.esusu && window.esusu.listGroups){ gcont.innerHTML=''; /* re-render quickly */ setTimeout(()=> location.reload(), 100); } }catch(e){}
+                            }catch(e){ if(window.showToast) window.showToast(String(e),'danger'); }
+                        })();
+                };
+                const buttons = Array.from(document.querySelectorAll('.filter-btn'));
+                buttons.forEach(b => b.addEventListener('click', ()=>{
+                    buttons.forEach(x=>x.classList.remove('active'));
+                    b.classList.add('active');
+                    const f = b.getAttribute('data-filter');
+                    if (window.renderHistory) window.renderHistory(f);
+                    if (window.renderRecentActivity) window.renderRecentActivity();
+                }));
+                document.getElementById('loadMoreHistory')?.addEventListener('click', ()=>{
+                    if (window._historyPager) window._historyPager.page += 1; else window._historyPager = {page:1};
+                    const active = document.querySelector('.filter-btn.active');
+                    const f = active ? active.getAttribute('data-filter') : 'all';
+                    if (window.renderHistory) window.renderHistory(f, null, { q: document.getElementById('historySearch')?.value || '' });
+                });
+                // search box (debounced)
+                const searchEl = document.getElementById('historySearch');
+                if (searchEl) {
+                    let t = null;
+                    searchEl.addEventListener('input', ()=>{
+                        clearTimeout(t);
+                        t = setTimeout(()=>{
+                            const q = searchEl.value || '';
+                            if (window.searchHistory) window.searchHistory(q);
+                        }, 300);
+                    });
+                }
+                // export CSV
+                const exportBtn = document.getElementById('exportCsv');
+                if (exportBtn) exportBtn.addEventListener('click', ()=>{
+                    const active = document.querySelector('.filter-btn.active');
+                    const f = active ? active.getAttribute('data-filter') : 'all';
+                    const q = document.getElementById('historySearch')?.value || '';
+                    if (window.exportHistoryCSV) window.exportHistoryCSV(f, { q });
+                });
+                // open settings modal
+                const settingsBtn = document.getElementById('openDashboardSettings');
+                if (settingsBtn) settingsBtn.addEventListener('click', ()=>{
+                    if (window._createSettingsModalIfNeeded) window._createSettingsModalIfNeeded();
+                    const m = document.getElementById('btSettingsModal');
+                    if (m) {
+                        // prefill values
+                        document.getElementById('bt_api_endpoint_input').value = localStorage.getItem('bt_api_endpoint') || window.BT_API_ENDPOINT || '';
+                        document.getElementById('bt_api_token_input').value = localStorage.getItem('bt_api_token') || window.BT_API_TOKEN || '';
+                        const user = localStorage.getItem('loggedInUser') || '';
+                        const prefs = JSON.parse(localStorage.getItem('bt_prefs')||'{}');
+                        const useOverride = prefs[user] && prefs[user].useBalanceOverride;
+                        document.getElementById('bt_use_override_balance').checked = !!useOverride;
+                        document.getElementById('bt_balance_override_input').value = window._bt_balance_display || '';
+                        m.style.display = 'flex';
+                    }
+                });
+
+                // recent activity collapse toggle (mobile-friendly) + auto-collapse on narrow viewports
+                (function(){
+                    const toggleBtn = document.getElementById('toggleRecent');
+                    const recentPanel = document.getElementById('recentPanel');
+                    if (!toggleBtn || !recentPanel) return;
+                    const THRESHOLD = 780; // px - auto-collapse when viewport width is less than this
+                    // init from stored preference if present, else auto-collapse based on width
+                    const stored = localStorage.getItem('bt_recent_collapsed');
+                    function applyState(collapsed){
+                        if (collapsed) {
+                            recentPanel.classList.add('collapsed');
+                            toggleBtn.classList.add('collapsed');
+                            toggleBtn.querySelector('.toggle-text').innerText = 'Show';
+                        } else {
+                            recentPanel.classList.remove('collapsed');
+                            toggleBtn.classList.remove('collapsed');
+                            toggleBtn.querySelector('.toggle-text').innerText = 'Hide';
+                        }
+                    }
+                    if (stored !== null && stored !== undefined) {
+                        applyState(stored === '1');
+                    } else {
+                        applyState(window.innerWidth < THRESHOLD);
+                    }
+                    // click toggles and persists preference
+                    toggleBtn.addEventListener('click', ()=>{
+                        const collapsed = recentPanel.classList.toggle('collapsed');
+                        toggleBtn.classList.toggle('collapsed', collapsed);
+                        toggleBtn.querySelector('.toggle-text').innerText = collapsed ? 'Show' : 'Hide';
+                        localStorage.setItem('bt_recent_collapsed', collapsed ? '1' : '0');
+                    });
+
+                    // auto-collapse/responsive behavior: only adjust if user hasn't stored a preference
+                    let resizeTimer = null;
+                    window.addEventListener('resize', ()=>{
+                        clearTimeout(resizeTimer);
+                        resizeTimer = setTimeout(()=>{
+                            const pref = localStorage.getItem('bt_recent_collapsed');
+                            if (pref === null || pref === undefined) {
+                                applyState(window.innerWidth < THRESHOLD);
+                            }
+                        }, 180);
+                    });
+                })();
+            }catch(e){console.error('history init failed',e)}
+        });
+    </script>
+</body>
+</html>
